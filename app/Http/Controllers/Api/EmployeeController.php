@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Employee;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -14,7 +14,7 @@ class EmployeeController extends Controller
             'page_size' => 'nullable|integer',
             'page' => 'nullable|integer',
         ]);
-        $results = Employee::paginate(request('page_size', 10));
+        $results = Patient::paginate(request('page_size', 10));
         return response()->json([
             'message' => 'Success get all employees!',
             'properties' => [

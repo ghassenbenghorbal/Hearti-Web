@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Employee;
+use App\Models\Patient;
 use App\Models\Co2;
 use App\Models\Humidity;
 use App\Models\Movement;
@@ -21,11 +21,6 @@ class DatabaseSeeder extends Seeder
     {
         //create admin account
         \App\Models\User::factory(1)->create();
-        Employee::factory(10)->create();
-        Block::factory(10)->create();
-        Co2::factory(200)->create();
-        Humidity::factory(200)->create();
-        Movement::factory(200)->create();
-        Temperature::factory(200)->create();
+        Patient::factory(10)->create();
     }
 }

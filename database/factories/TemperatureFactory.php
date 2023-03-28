@@ -22,8 +22,7 @@ class TemperatureFactory extends Factory
     public function definition()
     {
         return [
-            "block_id" => random_int(1,5),
-            "temp" => random_int(60, 75),
+            "temperature" => random_int(60, 75),
             "created_at" => time() + random_int(-300000,100000)
         ];
     }

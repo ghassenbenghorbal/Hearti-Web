@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -10,7 +10,7 @@ class EmployeeController extends Controller
 {
     public function index(Request $request)
     {
-        $data = Employee::when($request->sort_by, function ($query, $value) {
+        $data = Patient::when($request->sort_by, function ($query, $value) {
                 $query->orderBy($value, request('order_by', 'asc'));
             })
             ->when(!isset($request->sort_by), function ($query) {
@@ -35,7 +35,7 @@ class EmployeeController extends Controller
             'age' => 'required',
             'address' => 'required|string',
         ]);
-        Employee::create($data);
+        Patient::create($data);
         return redirect()->back()->with('message', [
             'type' => 'success',
             'text' => 'Success create employee!',

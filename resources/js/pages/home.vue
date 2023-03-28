@@ -5,20 +5,24 @@
             <b>Patient is sick!</b>
         </v-snackbar> -->
         <!-- Customization -->
-        
-        <div class="mb-4 d-flex">
+
+        <div class="mb-4 d-flex align-center justify-center">
             <div style="width:250px;" class="mr-3 white">
                 <div class="d-inline-flex">
                     <v-select v-model="block" @input="changePatient" :items="patients" item-text="name" item-value="id" label="Patient" dense outlined hide-details></v-select>
                 </div>
             </div>
-            <div class="mt-1">
-                <v-chip class="ml-2" v-for="(overview, index) in overviews" :key="index" :color="overview.color" pill>
-                    <v-icon right>
-                        {{ overview.icon }}
-                    </v-icon>
-                    <b class="ml-3">{{ overview.text }}</b> : {{ patient[index] }}
-                </v-chip>
+            <div class="">
+                <v-row>
+                    <v-col  v-for="(overview, index) in overviews" :key="index">
+                        <v-chip :color="overview.color" pill>
+                            <v-icon right>
+                                {{ overview.icon }}
+                            </v-icon>
+                            <b class="ml-3">{{ overview.text }}</b> : {{ patient[index] }}
+                        </v-chip>
+                    </v-col>
+                </v-row>
             </div>
         </div>
         <div style="" class=" flex-grow-1">
