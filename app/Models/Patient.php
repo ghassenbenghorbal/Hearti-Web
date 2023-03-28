@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
-class Employee extends Model
+class Patient extends Model
 {
     use HasFactory;
 
@@ -16,7 +16,7 @@ class Employee extends Model
         'relative_name',
         'relative_contact',
         'age',
-        'address'
+        'address',
     ];
 
     public function getCreatedAtAttribute($value)

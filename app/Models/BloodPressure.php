@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Movement extends Model
+class BloodPressure extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'block_id',
-        'created_at'
+        'user_id',
+        'blood_pressure',
     ];
 }
