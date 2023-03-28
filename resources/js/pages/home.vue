@@ -1,13 +1,11 @@
 <template>
 <admin-layout>
-    <div style="height:100%">
-        <v-snackbar v-model="sick" v-if="true" timeout="-1" dense top right color="error">
-            <!-- <v-icon dark class="mr-2">
-                mdi-checkbox-marked-circle
-            </v-icon> -->
+    <div style="height:100%" class="d-flex flex-column">
+        <!-- <v-snackbar v-model="sick" v-if="true" timeout="-1" dense top right color="error">
             <b>Patient is sick!</b>
-        </v-snackbar>
+        </v-snackbar> -->
         <!-- Customization -->
+        
         <div class="mb-4 d-flex">
             <div style="width:250px;" class="mr-3 white">
                 <div class="d-inline-flex">
@@ -23,116 +21,121 @@
                 </v-chip>
             </div>
         </div>
-        <div style="height:95%" class="hidden-sm-and-down">
+        <div style="" class=" flex-grow-1">
             <v-row align="center" justify="center" style="height:50%">
-                <v-col cols="6" v-for="chart in chartsP1" :key="chart.id" style="height:100%">
-                    <v-card class="" width="95%" height="100%">
+                <v-col md="6" cols="12" v-for="chart in chartsP1" :key="chart.id" style="height:100%">
+                    <v-card class="" width="100%" height="100%">
                         <apexchart :ref="chart.id" height="94%" width="100%" type="line" :options="chart.chartOptions" :series="chart.series"></apexchart>
                     </v-card>
                 </v-col>
-                <v-row>
-                    <v-col style="height:100%" class="ml-4">
-                        <div>
-                            <v-sheet elevation="2" rounded color="white">
-                                <v-container fluid class=" pa-0">
-                                    <div class="mx-auto" style="height: 105px; width: 105px;">
-                                        <v-img class="imgStyle" src="https://apollohealthlib.blob.core.windows.net/health-library/2021/06/shutterstock_1236631984-scaled.jpg"></v-img>
-                                    </div>
-                                    <div style="background-color: #e3e3e3">
-                                        <div style="color:black" class="text-caption pt-1 text-center">
-                                            <b>Heart Rate</b>
+                <v-col md="6" cols="12">
+                    <v-row class="px-10">
+                        <v-col style="height:100%" class="">
+                            <div>
+                                <v-sheet elevation="2" rounded color="white">
+                                    <v-container fluid class=" pa-0">
+                                        <div class="mx-auto" style="height: 105px; width: 105px;">
+                                            <v-img class="imgStyle" src="https://apollohealthlib.blob.core.windows.net/health-library/2021/06/shutterstock_1236631984-scaled.jpg"></v-img>
                                         </div>
-                                        <div style="color:black" class="text-caption text-center">
-                                            {{ heartRate }} bpm
+                                        <div style="background-color: #e3e3e3">
+                                            <div style="color:black" class="text-caption pt-1 text-center">
+                                                <b>Heart Rate</b>
+                                            </div>
+                                            <div style="color:black" class="text-caption text-center">
+                                                {{ heartRate }} bpm
+                                            </div>
+                                            <div style="color:black" class="text-caption text-center pt-0 pb-0">
+                                                <small>Status: Normal</small>
+                                            </div>
                                         </div>
-                                        <div style="color:black" class="text-caption text-center pt-0 pb-0">
-                                            <small>Status: Normal</small>
+                                    </v-container>
+                                </v-sheet>
+                            </div>
+                        </v-col>
+                        <v-col style="height:100%" class="">
+                            <div>
+                                <v-sheet elevation="2" rounded color="white">
+                                    <v-container fluid class=" pa-0">
+                                        <div class="mx-auto" style="height: 105px; width: 105px;">
+                                            <v-img class="imgStyle" src="https://img.freepik.com/premium-vector/arterial-blood-pressure-icon-flat-style-heartbeat-monitor-vector-illustration-isolated-background-pulse-diagnosis-sign-business-concept_157943-665.jpg?w=2000"></v-img>
                                         </div>
-                                    </div>
-                                </v-container>
-                            </v-sheet>
-                        </div>
-                    </v-col>
-                    <v-col style="height:100%" class="ml-4">
-                        <div>
-                            <v-sheet elevation="2" rounded color="white">
-                                <v-container fluid class=" pa-0">
-                                    <div class="mx-auto" style="height: 105px; width: 105px;">
-                                        <v-img class="imgStyle" src="https://img.freepik.com/premium-vector/arterial-blood-pressure-icon-flat-style-heartbeat-monitor-vector-illustration-isolated-background-pulse-diagnosis-sign-business-concept_157943-665.jpg?w=2000"></v-img>
-                                    </div>
-                                    <div style="background-color: #e3e3e3">
-                                        <div style="color:black" class="text-caption pt-1 text-center">
-                                            <b>Blood Pressure</b>
+                                        <div style="background-color: #e3e3e3">
+                                            <div style="color:black" class="text-caption pt-1 text-center">
+                                                <b>Blood Pressure</b>
+                                            </div>
+                                            <div style="color:black" class="text-caption text-center">
+                                                {{ bloodPressure }} mmHg
+                                            </div>
+                                            <div style="color:black" class="text-caption text-center pt-0 pb-0">
+                                                <small>Status: Normal</small>
+                                            </div>
                                         </div>
-                                        <div style="color:black" class="text-caption text-center">
-                                            {{ bloodPressure }} mmHg
+                                    </v-container>
+                                </v-sheet>
+                            </div>
+                        </v-col>
+                        <v-col style="height:100%" class="">
+                            <div>
+                                <v-sheet elevation="2" rounded color="white">
+                                    <v-container fluid class=" pa-0">
+                                        <div class="d-flex align-center mx-auto" style="height: 105px; width: 105px;">
+                                            <v-img class="imgStyle" src="https://t3.ftcdn.net/jpg/02/87/70/82/360_F_287708200_wTq4URYtOsqH1Mjk2VxxulrkcTo0EkY0.jpg"></v-img>
                                         </div>
-                                        <div style="color:black" class="text-caption text-center pt-0 pb-0">
-                                            <small>Status: Normal</small>
+                                        <div style="background-color: #e3e3e3">
+                                            <div style="color:black" class="text-caption pt-1 text-center">
+                                                <b>CGM</b>
+                                            </div>
+                                            <div style="color:black" class="text-caption text-center">
+                                                {{glucose}} mg/dL
+                                            </div>
+                                            <div style="color:black" class="text-caption text-center pt-0 pb-0">
+                                                <small>Status: Normal</small>
+                                            </div>
                                         </div>
-                                    </div>
-                                </v-container>
-                            </v-sheet>
-                        </div>
-                    </v-col>
-                    <v-col style="height:100%" class="ml-4">
-                        <div>
-                            <v-sheet elevation="2" rounded color="white">
-                                <v-container fluid class=" pa-0">
-                                    <div class="mx-auto" style="height: 105px; width: 105px;">
-                                        <v-img class="imgStyle" src="https://t3.ftcdn.net/jpg/02/87/70/82/360_F_287708200_wTq4URYtOsqH1Mjk2VxxulrkcTo0EkY0.jpg"></v-img>
-                                    </div>
-                                    <div style="background-color: #e3e3e3">
-                                        <div style="color:black" class="text-caption pt-1 text-center">
-                                            <b>CGM</b>
+                                    </v-container>
+                                </v-sheet>
+                            </div>
+                        </v-col>
+                        <v-col style="height:100%" class="">
+                            <div>
+                                <v-sheet elevation="2" rounded color="white">
+                                    <v-container fluid class=" pa-0">
+                                        <div class="mx-auto" style="height: 105px; width: 105px;">
+                                            <v-img class="imgStyle" src="https://media.istockphoto.com/id/1133812963/vector/love-icon-or-valentines-day-sign-designed-for-celebration.jpg?s=612x612&w=0&k=20&c=mmDpiIJO0hVaqkVP7lvzpD9iZKg9Z5TMOIRPOEUZiig="></v-img>
                                         </div>
-                                        <div style="color:black" class="text-caption text-center">
-                                            {{glucose}} mg/dL
+                                        <div style="background-color: #e3e3e3">
+                                            <div style="color:black" class="text-caption pt-1 text-center">
+                                                <b>Overall</b>
+                                            </div>
+                                            <div style="color:black" class="text-caption text-center">
+                                                <v-chip x-small :color="sick ? 'error' : 'success'">
+                                                    {{sick ? 'Sick' : 'Healthy'}}
+                                                </v-chip>
+                                            </div>
+                                            <div style="color:black" class="text-caption text-center pt-0 pb-0">
+                                                <small>Status: Normal</small>
+                                            </div>
                                         </div>
-                                        <div style="color:black" class="text-caption text-center pt-0 pb-0">
-                                            <small>Status: Normal</small>
-                                        </div>
-                                    </div>
-                                </v-container>
-                            </v-sheet>
-                        </div>
-                    </v-col>
-                    <v-col style="height:100%" class="ml-4">
-                        <div>
-                            <v-sheet elevation="2" rounded color="white">
-                                <v-container fluid class=" pa-0">
-                                    <div class="mx-auto" style="height: 105px; width: 105px;">
-                                        <v-img width="75" height="75" class="mx-auto imgStyle" src="https://media.istockphoto.com/id/1133812963/vector/love-icon-or-valentines-day-sign-designed-for-celebration.jpg?s=612x612&w=0&k=20&c=mmDpiIJO0hVaqkVP7lvzpD9iZKg9Z5TMOIRPOEUZiig="></v-img>
-                                    </div>
-                                    <div style="background-color: #e3e3e3">
-                                        <div style="color:black" class="text-caption pt-1 text-center">
-                                            <b>Health</b>
-                                        </div>
-                                        <div style="color:black" class="text-caption text-center">
-                                            <v-chip x-small :color="sick ? 'error' : 'success'">
-                                                {{sick ? 'Sick' : 'Healthy'}}
-                                            </v-chip>
-                                        </div>
-                                        <div style="color:black" class="text-caption text-center pt-0 pb-0">
-                                            <small>Status: Normal</small>
-                                        </div>
-                                    </div>
-                                </v-container>
-                            </v-sheet>
-                        </div>
-                    </v-col>
-                </v-row>
-                <v-row>
-                </v-row>
+                                    </v-container>
+                                </v-sheet>
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-col>
+                <v-col md="6" cols="12" v-for="chart in chartsP2" :key="chart.id" style="height:100%">
+                    <v-card class="" width="100%" height="100%">
+                        <apexchart :ref="chart.id" height="94%" width="100%" type="line" :options="chart.chartOptions" :series="chart.series"></apexchart>
+                    </v-card>
+                </v-col>
             </v-row>
 
-            <v-row align="center" justify="center" style="height:50%" class="mt-2">
+            <!-- <v-row align="center" justify="center" style="height:50%" class="mt-2">
                 <v-col v-for="chart in chartsP2" :key="chart.id" style="height:100%">
                     <v-card class="" width="95%" height="100%">
                         <apexchart :ref="chart.id" height="94%" width="100%" type="line" :options="chart.chartOptions" :series="chart.series"></apexchart>
                     </v-card>
                 </v-col>
-            </v-row>
+            </v-row> -->
         </div>
         <!-- Laptop and above -->
     </div>

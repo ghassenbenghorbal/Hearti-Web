@@ -1,7 +1,7 @@
 <template>
 <admin-layout>
-    <div class="d-flex flex-wrap align-center">
-        <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" label="Search" single-line dense clearable hide-details class="py-4" solo style="max-width: 300px" />
+    <div class="d-flex flex-wrap mb-3">
+        <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" label="Search" single-line dense clearable hide-details class="" solo style="max-width: 300px" />
         <v-spacer />
         <v-btn color="primary" @click="create">
             <v-icon dark left> mdi-plus </v-icon> New

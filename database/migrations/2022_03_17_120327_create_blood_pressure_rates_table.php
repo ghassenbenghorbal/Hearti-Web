@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMovementsTable extends Migration
+class CreateBloodPressureTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateMovementsTable extends Migration
      */
     public function up()
     {
-        Schema::create('movements', function (Blueprint $table) {
+        Schema::create('blood_pressures', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('block_id');
-            $table->foreign('block_id')->references('id')->on('blocks');
+            $table->unsignedBigInteger('patient_id');
+            $table->foreign('patient_id')->references('id')->on('patients');
+            $table->integer('blood_pressure');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreateMovementsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('movements');
+        Schema::dropIfExists('blood_pressures');
     }
 }

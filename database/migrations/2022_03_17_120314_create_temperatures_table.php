@@ -15,9 +15,9 @@ class CreateTemperaturesTable extends Migration
     {
         Schema::create('temperatures', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('block_id');
-            $table->foreign('block_id')->references('id')->on('blocks');
-            $table->float('temp');
+            $table->unsignedBigInteger('patient_id');
+            $table->foreign('patient_id')->references('id')->on('patients');
+            $table->float('temperature', 3, 1);
             $table->timestamps();
         });
     }

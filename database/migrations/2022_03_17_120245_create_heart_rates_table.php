@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEmployeesTable extends Migration
+class CreateCo2sTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,11 @@ class CreateEmployeesTable extends Migration
      */
     public function up()
     {
-        Schema::create('employees', function (Blueprint $table) {
+        Schema::create('heart_rates', function (Blueprint $table) {
             $table->id();
-            $table->text('secret_phrase');
-            $table->text('name');
-            $table->text('relative_name');
-            $table->text('relative_contact');
-            $table->integer('age');
-            $table->text('address');
+            $table->unsignedBigInteger('patient_id');
+            $table->foreign('patient_id')->references('id')->on('patients');
+            $table->integer('heart_rate');
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ class CreateEmployeesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('employees');
+        Schema::dropIfExists('heart_rates');
     }
 }
