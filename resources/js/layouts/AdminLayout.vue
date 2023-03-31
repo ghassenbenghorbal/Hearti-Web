@@ -111,7 +111,7 @@ export default {
                 },
                 {
                     title: "Patients",
-                    to: "employee.index"
+                    to: "patient.index"
                 },
             ],
             miniVariant: false,

@@ -109,7 +109,7 @@ export default {
                 {
                     text: "Patient",
                     disabled: true,
-                    href: "/employee",
+                    href: "/patient",
                 },
             ],
             dialog: false,
@@ -157,7 +157,7 @@ export default {
     methods: {
         updateData() {
             this.isLoadingTable = true
-            this.$inertia.get("/employee", this.params, {
+            this.$inertia.get("/patient", this.params, {
                 preserveState: true,
                 preverseScroll: true,
                 onSuccess: () => {
@@ -185,7 +185,7 @@ export default {
             this.dialogDelete = true;
         },
         destroy() {
-            this.form.delete(route("employee.destroy", this.itemId), {
+            this.form.delete(route("patient.destroy", this.itemId), {
                 preverseScroll: true,
                 onSuccess: () => {
                     this.dialogDelete = false;
@@ -195,7 +195,7 @@ export default {
         },
         submit() {
             if (this.isUpdate) {
-                this.form.put(route("employee.update", this.itemId), {
+                this.form.put(route("patient.update", this.itemId), {
                     preverseScroll: true,
                     onSuccess: () => {
                         this.isLoading = false;
@@ -206,7 +206,7 @@ export default {
                     },
                 });
             } else {
-                this.form.post(route("employee.store"), {
+                this.form.post(route("patient.store"), {
                     preverseScroll: true,
                     onSuccess: () => {
                         this.isLoading = false;

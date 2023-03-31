@@ -6,7 +6,7 @@ use App\Models\Patient;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class EmployeeController extends Controller
+class PatientController extends Controller
 {
     public function index(Request $request)
     {
@@ -19,8 +19,8 @@ class EmployeeController extends Controller
             ->when($request->search, function ($query, $value) {
                 $query->where('name', 'LIKE', '%'.$value.'%');
             })
-            ->paginate($request->page_size ?? 10);
-        return Inertia::render('employee/index', [
+            ->paginate($request->page_size == -1 ? 1000 : $request->page_size);
+        return Inertia::render('patient/index', [
             'items' => $data,
         ]);
     }
@@ -38,11 +38,11 @@ class EmployeeController extends Controller
         Patient::create($data);
         return redirect()->back()->with('message', [
             'type' => 'success',
-            'text' => 'Success create employee!',
+            'text' => 'Success create patient!',
         ]);
     }
 
-    public function update(Employee $employee, Request $request)
+    public function update(Employee $patient, Request $request)
     {
         $data = $this->validate($request, [
             'secret_phrase' => 'required',
@@ -52,20 +52,20 @@ class EmployeeController extends Controller
             'age' => 'required',
             'address' => 'required|string'
         ]);
-        $employee->update($data);
+        $patient->update($data);
         return redirect()->back()->with('message', [
             'type' => 'success',
-            'text' => 'Success edit employee!',
+            'text' => 'Success edit patient!',
         ]);
     }
 
-    public function destroy(Employee $employee)
+    public function destroy(Employee $patient)
     {
-        $employee->delete();
-        Block::where('id', $employee->id)->delete();
+        $patient->delete();
+        Block::where('id', $patient->id)->delete();
         return redirect()->back()->with('message', [
             'type' => 'success',
-            'text' => 'Success delete employee!',
+            'text' => 'Success delete patient!',
         ]);
     }
 }

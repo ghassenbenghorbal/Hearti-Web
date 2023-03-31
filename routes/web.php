@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\HelloController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
@@ -32,6 +32,6 @@ Route::get('/', function () {
         Route::post('generate-token', [UserController::class, 'generateApiToken']);
     });
 
-Route::resource('employee', EmployeeController::class)->only(['index', 'store', 'update', 'destroy']);
+Route::resource('patient', PatientController::class)->only(['index', 'store', 'update', 'destroy']);
 
 require __DIR__.'/auth.php';

@@ -7,14 +7,14 @@
         <!-- Customization -->
 
         <div class="mb-4 d-flex align-center justify-center">
-            <div style="width:250px;" class="mr-3 white">
+            <div style="width:250px;" class="mr-5 white">
                 <div class="d-inline-flex">
                     <v-select v-model="block" @input="changePatient" :items="patients" item-text="name" item-value="id" label="Patient" dense outlined hide-details></v-select>
                 </div>
             </div>
             <div class="">
                 <v-row>
-                    <v-col  v-for="(overview, index) in overviews" :key="index">
+                    <v-col v-for="(overview, index) in overviews" :key="index">
                         <v-chip :color="overview.color" pill>
                             <v-icon right>
                                 {{ overview.icon }}
@@ -49,7 +49,10 @@
                                                 {{ heartRate }} bpm
                                             </div>
                                             <div style="color:black" class="text-caption text-center pt-0 pb-0">
-                                                <small>Status: Normal</small>
+                                                <small>Status: <v-chip x-small :color="this.heartRate > 88  ? 'error' : 'success'">
+                                                        {{sick ? 'Sick' : 'Healthy'}}
+                                                    </v-chip>
+                                                </small>
                                             </div>
                                         </div>
                                     </v-container>
@@ -71,7 +74,9 @@
                                                 {{ bloodPressure }} mmHg
                                             </div>
                                             <div style="color:black" class="text-caption text-center pt-0 pb-0">
-                                                <small>Status: Normal</small>
+                                                <small>Status: <v-chip x-small :color="this.bloodPressure > 118  ? 'error' : 'success'">
+                                                        {{sick ? 'Sick' : 'Healthy'}}
+                                                    </v-chip></small>
                                             </div>
                                         </div>
                                     </v-container>
@@ -83,17 +88,19 @@
                                 <v-sheet elevation="2" rounded color="white">
                                     <v-container fluid class=" pa-0">
                                         <div class="d-flex align-center mx-auto" style="height: 105px; width: 105px;">
-                                            <v-img class="imgStyle" src="https://t3.ftcdn.net/jpg/02/87/70/82/360_F_287708200_wTq4URYtOsqH1Mjk2VxxulrkcTo0EkY0.jpg"></v-img>
+                                            <v-img class="imgStyle" src="https://runningmagazine.ca/wp-content/uploads/2019/08/gettyimages-1002295536-170667a.jpg"></v-img>
                                         </div>
                                         <div style="background-color: #e3e3e3">
                                             <div style="color:black" class="text-caption pt-1 text-center">
-                                                <b>CGM</b>
+                                                <b>Temperature</b>
                                             </div>
                                             <div style="color:black" class="text-caption text-center">
-                                                {{glucose}} mg/dL
+                                                {{temperature}} °C
                                             </div>
                                             <div style="color:black" class="text-caption text-center pt-0 pb-0">
-                                                <small>Status: Normal</small>
+                                                <small>Status: <v-chip x-small :color="this.temperature > 37  ? 'error' : 'success'">
+                                                        {{sick ? 'Sick' : 'Healthy'}}
+                                                    </v-chip></small>
                                             </div>
                                         </div>
                                     </v-container>
@@ -112,12 +119,12 @@
                                                 <b>Overall</b>
                                             </div>
                                             <div style="color:black" class="text-caption text-center">
-                                                <v-chip x-small :color="sick ? 'error' : 'success'">
-                                                    {{sick ? 'Sick' : 'Healthy'}}
-                                                </v-chip>
+                                                <br>
                                             </div>
                                             <div style="color:black" class="text-caption text-center pt-0 pb-0">
-                                                <small>Status: Normal</small>
+                                                <small>Status: <v-chip x-small :color="sick ? 'error' : 'success'">
+                                                    {{sick ? 'Sick' : 'Healthy'}}
+                                                </v-chip></small>
                                             </div>
                                         </div>
                                     </v-container>
@@ -148,27 +155,6 @@
 
 <script>
 import AdminLayout from "../layouts/AdminLayout.vue";
-import {
-    getCo2Data,
-    co2ChartOptions
-} from "../methods/charts/co2/co2-chart.js";
-import {
-    getHumidityData,
-    humidityChartOptions
-} from "../methods/charts/humidity/humidity-chart.js";
-import {
-    getTemperatureData,
-    temperatureChartOptions
-} from "../methods/charts/temperature/temperature-chart.js";
-import {
-    getMovementData,
-    movementChartOptions
-} from "../methods/charts/movement/movement-chart.js";
-
-import {
-    getBlocks
-} from "../methods/charts/blocks/blocks";
-
 export default {
     components: {
         AdminLayout
@@ -193,8 +179,8 @@ export default {
             heartRateArray: [],
             bloodPressure: 0,
             bloodPressureArray: [],
-            glucose: 0,
-            glucoseArray: [],
+            temperature: 0,
+            temperatureArray: [],
             overviews: [{
                     text: "Name",
                     value: null,
@@ -291,31 +277,136 @@ export default {
             ],
             interval: 1,
             charts: [{
-                    id: "co2",
-                    chartOptions: co2ChartOptions,
+                    id: "heartRate",
+                    chartOptions: {
+                        chart: {
+                            id: 'heart-rate-chart',
+                        },
+                        stroke: {
+                            curve: "smooth"
+                        },
+                        markers: {
+                            size: 1
+                        },
+                        title: {
+                            text: "Heart Rate",
+                        },
+                        colors: ['#EF5350', '#EF5350'],
+
+                        legend: {
+                            show: true,
+                            position: "top"
+                        },
+                        xaxis: {
+                            tickAmount: 5,
+                            labels: {
+                                rotate: 0,
+                                hideOverlappingLabels: true,
+                            }
+                        },
+                        yaxis: {
+                            forceNiceScale: true,
+                            labels: {
+                                formatter: function (value) {
+                                    return value + " bpm";
+                                }
+                            },
+                        },
+                        noData: {
+                            text: 'Loading...'
+                        }
+                    },
                     series: [{
                         name: "Heart Rate",
                         data: []
                     }]
                 },
                 {
-                    id: "temperature",
-                    chartOptions: temperatureChartOptions,
+                    id: "bloodPressure",
+                    chartOptions: {
+                        chart: {
+                            id: 'blood-pressure-chart'
+                        },
+                        stroke: {
+                            curve: "smooth"
+                        },
+                        markers: {
+                            size: 1
+                        },
+                        title: {
+                            text: "Blood Pressure",
+                        },
+                        legend: {
+                            show: true,
+                            position: "top"
+                        },
+                        colors: ['#66DA26', '#546E7A', '#E91E63', '#FF9800'],
+                        yaxis: {
+                            labels: {
+                                formatter: function (value) {
+                                    return value + " mmHg";
+                                }
+                            },
+                            forceNiceScale: true,
+                        },
+                        xaxis: {
+                            tickAmount: 5,
+                            labels: {
+                                rotate: 0,
+                                hideOverlappingLabels: true,
+                            }
+                        },
+                        noData: {
+                            text: 'Loading...'
+                        }
+                    },
                     series: [{
                         name: "Blood Pressure",
                         data: []
                     }]
                 },
                 {
-                    id: "humidity",
-                    chartOptions: humidityChartOptions,
+                    id: "temperature",
+                    chartOptions: {
+                        chart: {
+                            id: 'temperature-chart'
+                        },
+                        stroke: {
+                            curve: "smooth"
+                        },
+                        markers: {
+                            size: 1
+                        },
+                        title: {
+                            text: "Temperature",
+                        },
+                        legend: {
+                            show: true,
+                            position: "top"
+                        },
+                        colors: ['#FF9800'],
+                        xaxis: {
+                            tickAmount: 5,
+                            labels: {
+                                rotate: 0,
+                                hideOverlappingLabels: true,
+                            }
+                        },
+                        yaxis: {
+                            labels: {
+                                formatter: function (value) {
+                                    return value + " °C";
+                                }
+                            },
+                            forceNiceScale: true,
+                        },
+
+                        noData: {
+                            text: 'Loading...'
+                        }
+                    },
                     series: []
                 },
-                {
-                    id: "movement",
-                    chartOptions: movementChartOptions,
-                    series: []
-                }
             ],
             breadcrumbs: [{
                     text: "App",
@@ -351,7 +442,7 @@ export default {
             if (this.heartRateArray.length > 10) {
                 this.heartRateArray.shift();
             }
-            this.$refs.co2[0].updateSeries([{
+            this.$refs.heartRate[0].updateSeries([{
                 data: [...new Set(this.heartRateArray)]
             }], false, true)
 
@@ -376,82 +467,44 @@ export default {
             if (this.bloodPressureArray.length > 10) {
                 this.bloodPressureArray.shift();
             }
-            this.$refs.temperature[0].updateSeries([{
+            this.$refs.bloodPressure[0].updateSeries([{
                 data: this.bloodPressureArray
             }], false, true)
 
         },
 
-        setGlucose() {
+        setTemperature() {
             // random number from 90 to 100
-            let x = Math.floor(Math.random() * (101 - 90)) + 90
+            let x = Math.floor(Math.random() * (41 - 36)) + 36
             x = Math.round(x);
-            this.glucoseArray
-            this.glucose = x;
+            this.temperatureArray
+            this.temperature = x;
 
             var date = new Date;
             var seconds = date.getSeconds();
             var minutes = date.getMinutes();
             var hours = date.getHours();
             let now = hours + ':' + minutes + ':' + seconds;
-            this.glucoseArray.push({
+            this.temperatureArray.push({
                 'x': now,
                 'y': x
             })
-            if (this.glucoseArray.length > 10) {
-                this.glucoseArray.shift();
+            if (this.temperatureArray.length > 10) {
+                this.temperatureArray.shift();
             }
-            this.$refs.humidity[0].updateSeries([{
-                data: this.glucoseArray
+            this.$refs.temperature[0].updateSeries([{
+                data: this.temperatureArray
             }], false, true)
 
         },
-        getChartData() {
-            clearInterval(this.timer);
-
-            // getCo2Data(this.block, this.date).then(s => {
-            //     this.charts[0].series = s;
-            // this.setHeartRate()
-            // });
-            // getHumidityData(this.block, this.date).then(s => {
-            //     this.charts[2].series = s;
-            // });
-            // getTemperatureData(this.block, this.date).then(s => {
-            //     this.charts[1].series = s;
-            // });
-            // getMovementData(this.block, this.date).then(s => {
-            //     this.charts[3].series = s;
-            // });
-
-            this.timer = setInterval(() => {
-
-                // getCo2Data(this.block, this.date).then(s => {
-                // this.charts[0].series = s;
-                this.setHeartRate()
-                // });
-                // getHumidityData(this.block, this.date).then(s => {
-                //     this.charts[1].series = s;
-                // });
-                // getTemperatureData(this.block, this.date).then(s => {
-                //     this.charts[2].series = s;
-                // });
-                // getMovementData(this.block, this.date).then(s => {
-                //     this.charts[3].series = s;
-                // });
-            }, 1025);
-        },
-        datePickerOnInput() {
-            this.dateMenu = false;
-            this.getChartData();
-        },
         changePatient() {
+            this.$refs.bloodPressure[0].updateSeries([{
+                data: []
+            }], false, true)
             this.$refs.temperature[0].updateSeries([{
                 data: []
             }], false, true)
-            this.$refs.humidity[0].updateSeries([{
-                data: []
-            }], false, true)
-            this.$refs.co2[0].updateSeries([{
+            this.$refs.heartRate[0].updateSeries([{
                 data: []
             }], false, true)
         }
@@ -464,7 +517,7 @@ export default {
             return this.charts.slice(1, 3);
         },
         sick() {
-            return this.heartRate > 88 || this.glucose > 98 || this.bloodPressure > 118
+            return this.heartRate > 88 || this.temperature > 37 || this.bloodPressure > 118
         }
     },
     watch: {
@@ -482,11 +535,10 @@ export default {
         });
     },
     mounted() {
-        // this.getChartData();
         this.timer = setInterval(() => {
             this.setHeartRate()
             this.setBloodPressure()
-            this.setGlucose()
+            this.setTemperature()
         }, 1600);
         let p = this.patients[0];
         this.patient.push(p.name);

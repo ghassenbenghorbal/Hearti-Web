@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\EmployeeController;
+use App\Http\Controllers\Api\PatientController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Charts\Co2Controller;
@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::prefix('v1')->group(function () {
-    Route::get('employee', [EmployeeController::class, 'index']);
+    Route::get('patient', [PatientController::class, 'index']);
 });
 Route::prefix('health')->group(function() {
     //Chart Routes
@@ -42,5 +42,4 @@ Route::prefix('health')->group(function() {
         Route::post('set-heart-rate', [HeartRateController::class, 'store'])->name("setHeartRate");
     });
 
-    Route::get('blocks', [HospitalController::class, 'index']);
 });

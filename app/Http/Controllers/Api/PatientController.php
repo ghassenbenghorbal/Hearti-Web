@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 
-class EmployeeController extends Controller
+class PatientController extends Controller
 {
     public function index(Request $request)
     {
@@ -14,9 +14,14 @@ class EmployeeController extends Controller
             'page_size' => 'nullable|integer',
             'page' => 'nullable|integer',
         ]);
-        $results = Patient::paginate(request('page_size', 10));
+        $result = null;
+        if($request->page_size == -1) {
+            $results = Patient::all();
+        }
+        else{
+            $results = Patient::paginate(request('page_size', 10));
+        }
         return response()->json([
-            'message' => 'Success get all employees!',
             'properties' => [
                 'page' => $results->currentPage(),
                 'total' => $results->total(),
