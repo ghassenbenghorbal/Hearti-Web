@@ -113,6 +113,14 @@ export default {
                     title: "Patients",
                     to: "patient.index"
                 },
+                {
+                    title: "Analysis",
+                    to: "analysis"
+                },
+                {
+                    title: "Chat",
+                    to: "chat"
+                },
             ],
             miniVariant: false,
         };

@@ -21,9 +21,9 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('auth/login');
-})->name('/');
+})->middleware('guest')->name('/');
 
-
+Route::middleware(['auth'])->group(function () {
     Route::get('home', [HomeController::class, 'index'])->name('home');
     Route::prefix('profile')->group(function(){
         Route::get('/', [UserController::class, 'index'])->name('profile');
@@ -32,6 +32,21 @@ Route::get('/', function () {
         Route::post('generate-token', [UserController::class, 'generateApiToken']);
     });
 
-Route::resource('patient', PatientController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::prefix('patient')->group(function(){
+        Route::get('/', [PatientController::class, 'index'])->name('patient.index');
+        Route::post('store', [PatientController::class, 'store'])->name('patient.store');
+        Route::put('update', [PatientController::class, 'update'])->name('patient.update');
+        Route::delete('delete', [PatientController::class, 'destroy'])->name('patient.destroy');
+    });
+
+    Route::get('/analysis', function () {
+        return Inertia::render('analysis');
+    })->name('analysis');
+    
+    Route::get('chat', function () {
+        return Inertia::render('chat');
+    })->name('chat');
+});
+
 
 require __DIR__.'/auth.php';

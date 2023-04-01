@@ -1,11 +1,6 @@
 <template>
 <admin-layout>
     <div style="height:100%" class="d-flex flex-column">
-        <!-- <v-snackbar v-model="sick" v-if="true" timeout="-1" dense top right color="error">
-            <b>Patient is sick!</b>
-        </v-snackbar> -->
-        <!-- Customization -->
-
         <div class="mb-4 d-flex align-center justify-center">
             <div style="width:250px;" class="mr-5 white">
                 <div class="d-inline-flex">
@@ -50,7 +45,7 @@
                                             </div>
                                             <div style="color:black" class="text-caption text-center pt-0 pb-0">
                                                 <small>Status:
-                                                    <v-chip v-if="item.text=='Overall'" x-small class=" text-uppercase" :color="dangerSteps[sick].color">
+                                                    <v-chip v-if="item.text == 'Overall'" x-small class=" text-uppercase" :color="dangerSteps[sick].color">
                                                         {{ dangerSteps[sick].text }}
                                                     </v-chip>
                                                     <v-chip v-else x-small class=" text-uppercase" :color="dangerSteps[item.status].color">
@@ -72,7 +67,6 @@
                 </v-col>
             </v-row>
         </div>
-        <!-- Laptop and above -->
     </div>
 </admin-layout>
 </template>
@@ -106,15 +100,18 @@ export default {
             temperature: 0,
             temperatureArray: [],
             dangerSteps: [{
-                text: 'stable',
-                color: 'success'
-            }, {
-                text: 'danger',
-                color: 'error'
-            }, {
-                text: 'warning',
-                color: 'warning'
-            }],
+                    text: "stable",
+                    color: "success"
+                },
+                {
+                    text: "danger",
+                    color: "error"
+                },
+                {
+                    text: "warning",
+                    color: "warning"
+                }
+            ],
             readings: [{
                     text: "Heart Rate",
                     value: "-",
@@ -504,18 +501,13 @@ export default {
             return this.charts.slice(1, 3);
         },
         sick() {
-            let count = 0
-            if (this.readings[2].value > 37 || this.readings[2].value < 36)
-                count++
-            if (this.readings[0].value > 88)
-                count++
-            if (this.readings[1].value > 118)
-                count++
-            if (count == 3)
-                return 1
-            if (count > 0)
-                return 2
-            return count
+            let count = 0;
+            if (this.readings[2].value > 37 || this.readings[2].value < 36) count++;
+            if (this.readings[0].value > 88) count++;
+            if (this.readings[1].value > 118) count++;
+            if (count >= 2) return 1;
+            if (count > 0) return 2;
+            return count;
         }
     },
     watch: {

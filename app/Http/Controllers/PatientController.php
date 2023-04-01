@@ -42,7 +42,7 @@ class PatientController extends Controller
         ]);
     }
 
-    public function update(Employee $patient, Request $request)
+    public function update(Patient $patient, Request $request)
     {
         $data = $this->validate($request, [
             'secret_phrase' => 'required',
@@ -59,7 +59,7 @@ class PatientController extends Controller
         ]);
     }
 
-    public function destroy(Employee $patient)
+    public function destroy(Patient $patient)
     {
         $patient->delete();
         Block::where('id', $patient->id)->delete();

@@ -22,22 +22,16 @@
     </v-data-table>
     <v-dialog v-model="dialog" max-width="500px" scrollable>
         <v-card>
-            <v-toolbar dense dark color="primary" class="text-h6">{{
-          formTitle
-        }}</v-toolbar>
+            <v-toolbar dense dark color="primary" class="text-h6">
+                {{formTitle}}
+            </v-toolbar>
             <v-card-text class="pt-4">
-              <!-- 'secret_phrase',
-              'name',
-              'relative_name',
-              'relative_contact',
-              'age',
-              'address' -->
                 <v-text-field v-model="form.secret_phrase" label="Secret Phrase" :error-messages="form.errors.secret_phrase" type="text" outlined dense />
                 <v-text-field v-model="form.name" label="Name" :error-messages="form.errors.name" type="text" outlined dense />
                 <v-text-field v-model="form.age" label="Age" :error-messages="form.errors.age" outlined dense />
                 <v-text-field v-model="form.relative_name" label="Relative Name" :error-messages="form.errors.relative_name" outlined dense />
                 <v-text-field v-model="form.relative_contact" label="Relative Contact" :error-messages="form.errors.relative_contact" outlined dense />
-                <v-textarea v-model="form.address" label="Address" :error-messages="form.errors.address" outlined dense :rows="3"/>
+                <v-textarea v-model="form.address" label="Address" :error-messages="form.errors.address" outlined dense :rows="3" />
                 <div class="d-flex"></div>
             </v-card-text>
             <v-card-actions>
@@ -88,8 +82,8 @@ export default {
                     value: "relative_name"
                 },
                 {
-                  text: "Relative Contact",
-                  value: "relative_contact"
+                    text: "Relative Contact",
+                    value: "relative_contact"
                 },
                 {
                     text: "Address",
@@ -172,9 +166,12 @@ export default {
         },
         editItem(item) {
             this.form.clearErrors();
+            this.form.secret_phrase = item.secret_phrase
             this.form.name = item.name;
             this.form.email = item.email;
-            this.form.job_title = item.job_title;
+            this.form.age = item.age;
+            this.form.relative_name = item.relative_name;
+            this.form.relative_contact = item.relative_contact;
             this.form.address = item.address;
             this.isUpdate = true;
             this.itemId = item.id;
