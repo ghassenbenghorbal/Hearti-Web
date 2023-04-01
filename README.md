@@ -1,17 +1,29 @@
-# Laravel InertiaJS Vuetify
-
 ## Features
 
 - Laravel 8
 - Inertia.js
 - Vue
 - Vuetify + Material Design Icons
-- Laravel Mix
-- Authentication (Login, Register, Forgot Password, Email Verification)
-- Example CRUD with serverside pagination, searching, and sorting
-- SPA (Single Page Application)
+- FastAPI
 
-## Installation
+## FastAPI Installation
+
+Install Dependecies
+```bash
+pip install fastapi
+pip install uvicorn
+pip install pydantic
+pip install scikit-learn
+pip install pandas
+pip install tensorflow
+```
+Run Server
+```bash
+cd fastapi
+uvicorn main:app --reload
+```
+
+## Laravel+Vue App Installation
 
 Install PHP Dependencies
 
