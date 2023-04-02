@@ -1,7 +1,8 @@
 <template>
 <admin-layout>
     <div style="height:100%" class="d-flex flex-column">
-        <div class="mb-4 d-flex align-center justify-center flex-wrap">
+
+        <div class="mb-4 d-flex align-center justify-center flex-wrap" v-if="$vuetify.breakpoint.lgAndUp">
             <div style="width:250px;" class="mr-5 white">
                 <div class="d-inline-flex">
                     <v-select v-model="block" @input="changePatient" :items="patients" item-text="name" item-value="id" label="Patient" dense outlined hide-details></v-select>
@@ -18,6 +19,24 @@
                     </div>
             </div>
         </div>
+        <div class="mb-4 d-flex align-center justify-center flex-wrap" v-if="$vuetify.breakpoint.mdAndDown">
+            <div class="d-flex flex-wrap justify-center">
+                    <div v-for="(overview, index) in overviews" :key="index" class="mx-1">
+                        <v-chip :color="overview.color" pill class="elevation-2">
+                            <v-icon right>
+                                {{ overview.icon }}
+                            </v-icon>
+                            <b class="ml-3">{{ overview.text }}</b> : {{ patient[index] }}
+                        </v-chip>
+                    </div>
+            </div>
+            <div style="width:250px;" class="mt-4 mr-5 white">
+                <div class="d-inline-flex">
+                    <v-select v-model="block" @input="changePatient" :items="patients" item-text="name" item-value="id" label="Patient" dense outlined hide-details></v-select>
+                </div>
+            </div>
+        </div>
+
         <div style="" class="flex-grow-1" v-if="$vuetify.breakpoint.mdAndUp">
             <v-row align="center" justify="center" style="height:50%">
                 <v-col md="6" cols="12" v-for="chart in chartsP1" :key="chart.id" style="height:100%">
@@ -26,9 +45,9 @@
                     </v-card>
                 </v-col>
                 <v-col md="6" cols="12">
-                    <v-row class="px-10">
-                        <v-col style="height:100%" v-for="(item, index) in readings" :key="index">
-                            <div >
+                    <v-row class="px-7">
+                        <v-col cols="6" md="3" lg="3" xl="3" style="height:100%" v-for="(item, index) in readings" :key="index">
+                            <div>
                                 <v-sheet elevation="2" rounded color="white">
                                     <v-container fluid class=" pa-0">
                                         <div class="mx-auto" style="height: 105px; width: 105px; background-color: white; mix-blend-mode: multiply;">
@@ -591,7 +610,7 @@ export default {
 }
 
 .imgstyle {
-    width: 15% !important;
+    width: 10% !important;
     aspect-ratio: 3/2 !important;
     object-fit: contain !important;
     mix-blend-mode: color-burn !important;
