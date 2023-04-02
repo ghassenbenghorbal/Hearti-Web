@@ -71,15 +71,21 @@ class MessageController extends Controller
     public function getDiscussions($id)
     {
         $user = User::findOrFail($id);
-        $messages = Message::where('sender', auth()->id())
-                            ->orWhere('receiver', auth()->id())
+        $messages = Message::where('sender', $id)
+                            ->orWhere('receiver', $id)
                             ->distinct()
                             ->select(\DB::raw("CASE 
-                                                WHEN sender = ".auth()->id()." THEN receiver 
-                                                WHEN receiver = ".auth()->id()." THEN sender 
-                                            END AS id"), 'text', 'created_at')
+                                                WHEN sender = ".$id." THEN receiver 
+                                                WHEN receiver = ".$id." THEN sender 
+                                            END AS user_id"),
+                                     'text',
+                                     'sender',
+                                     'created_at',)
+                            ->with('sender')
                             ->get();
-
+        foreach($messages as $message) {
+            $message->user = User::findOrFail($message->user_id);
+        }
         return $messages;
     }
 

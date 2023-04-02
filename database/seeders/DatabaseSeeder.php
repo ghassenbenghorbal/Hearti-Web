@@ -3,11 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Patient;
-use App\Models\Co2;
-use App\Models\Humidity;
-use App\Models\Movement;
-use App\Models\Temperature;
-use App\Models\Block;
+use App\Models\User;
+use App\Models\Message;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -19,8 +16,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        //create admin account
-        \App\Models\User::factory(1)->create();
+        $users = User::factory(10)->create();
         Patient::factory(10)->create();
+        foreach($users as $user) {
+            //create 10 message for each user
+            for($i = 0; $i < 10; $i++) {
+                Message::factory(1)->create([
+                    'text' => 'Hello, I am ' . $user->name . ' and I am a ' . ($user->is_patient ? 'patient' : 'doctor') . '.',
+                    'sender' => $user->id,
+                    //receiver is random user who is not the sender
+                    'receiver' => $users->where('id', '!=', $user->id)->random()->id,
+                    'attachement' => 'image'
+                ]);
+            }
+
+        }
     }
 }

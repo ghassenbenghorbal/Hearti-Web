@@ -16,7 +16,9 @@
                             </v-list-item-avatar>
                             <v-list-item-content>
                                 <v-list-item-title>{{ discussion.patient.name }}</v-list-item-title>
-                                <v-list-item-subtitle class="d-flex"><div class=" text-truncate" style="max-width:80%;">{{ discussion.message.sender == "doctor" ? "You: " : ""}}{{ discussion.message.text }}</div>&nbsp;-<div>{{ formatDate(discussion.message.timestamp) }}</div></v-list-item-subtitle>
+                                <v-list-item-subtitle class="d-flex">
+                                    <div class=" text-truncate" style="max-width:80%;">{{ discussion.sender.id == discussion.user_id ? "You: " : ""}}{{ discussion.text }}</div>&nbsp;-<div>{{ formatDate(discussion.created_at) }}</div>
+                                </v-list-item-subtitle>
                             </v-list-item-content>
                         </v-list-item>
                     </v-list-item-group>
@@ -64,33 +66,47 @@ export default {
             ],
             selectedDiscussion: null,
             discussions: [{
-                patient: {
-                    name: "Dali Spinoza"
+                "user_id": 1,
+                "text": "Hello, I am Kaylah Nitzsche and I am a doctor.",
+                "sender": {
+                    "id": 1,
+                    "name": "Kaylah Nitzsche",
+                    "email": "jalon.johnson@example.org",
+                    "email_verified_at": "2023-04-02T18:37:06.000000Z",
+                    "is_patient": 0,
+                    "created_at": "2023-04-02T18:37:06.000000Z",
+                    "updated_at": "2023-04-02T18:37:06.000000Z"
                 },
-                message: {
-                    text: "You are more likely to have a heart disease",
-                    sender: "doctor",
-                    timestamp: new Date(),
-                }
-            }, {
-                patient: {
-                    name: "Alexander The Great",
-                },
-                message: {
-                    text: "You are less likely to have a heart disease",
-                    sender: "doctor",
-                    timestamp: new Date(),
-                }
-            }, {
-                patient: {
-                    name: "Christopher Colombus",
-                },
-                message: {
-                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                    sender: "patient",
-                    timestamp: new Date(),
-                }
+                "created_at": "2023-04-02T18:37:06.000000Z"
             }, ]
+            // discussions: [{
+            //     patient: {
+            //         name: "Dali Spinoza"
+            //     },
+            //     message: {
+            //         text: "You are more likely to have a heart disease",
+            //         sender: "doctor",
+            //         timestamp: new Date(),
+            //     }
+            // }, {
+            //     patient: {
+            //         name: "Alexander The Great",
+            //     },
+            //     message: {
+            //         text: "You are less likely to have a heart disease",
+            //         sender: "doctor",
+            //         timestamp: new Date(),
+            //     }
+            // }, {
+            //     patient: {
+            //         name: "Christopher Colombus",
+            //     },
+            //     message: {
+            //         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            //         sender: "patient",
+            //         timestamp: new Date(),
+            //     }
+            // }, ]
         };
     },
     methods: {
