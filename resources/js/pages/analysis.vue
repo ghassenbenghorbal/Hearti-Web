@@ -6,7 +6,7 @@
                 <v-toolbar-title>Heart Disease Analysis</v-toolbar-title>
             </v-toolbar>
             <v-card-text class="pb-0">Please fill this form to run the analysis!</v-card-text>
-            <v-form @submit.prevent="submitForm">
+            <v-form @submit.prevent="submitForm" ref="form">
                 <v-container>
                     <v-row>
                         <v-col cols="12" md="6">
