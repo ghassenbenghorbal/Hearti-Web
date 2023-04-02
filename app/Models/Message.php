@@ -18,6 +18,9 @@ class Message extends Model
         'attachement',
     ];
 
+    //get the user of the message receiver or sender doesn't matter
+
+
     public function sender()
     {
         return $this->hasOne(User::class, 'id', 'sender');

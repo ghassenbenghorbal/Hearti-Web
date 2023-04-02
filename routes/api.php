@@ -27,11 +27,9 @@ use App\Http\Controllers\MessageController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::prefix('v1')->middleware('auth.basic')->group(function () {
+Route::prefix('v1')->middleware('auth')->group(function () {
     Route::prefix('chat')->group(function() {
-
         Route::get('discussions/{id}', [MessageController::class, 'getDiscussions'])->name('discussions');
-
         Route::post('store', [MessageController::class, 'store'])->name('store');
         Route::get('{sender}/{receiver}', [MessageController::class, 'show'])->name('show');
         Route::delete('{id}', [MessageController::class, 'destroy'])->name('destroy');

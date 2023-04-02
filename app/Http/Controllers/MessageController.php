@@ -71,22 +71,27 @@ class MessageController extends Controller
     public function getDiscussions($id)
     {
         $user = User::findOrFail($id);
-        $messages = Message::where('sender', $id)
+        $patients = Message::where('sender', $id)
                             ->orWhere('receiver', $id)
-                            ->distinct()
                             ->select(\DB::raw("CASE 
-                                                WHEN sender = ".$id." THEN receiver 
-                                                WHEN receiver = ".$id." THEN sender 
-                                            END AS user_id"),
-                                     'text',
-                                     'sender',
-                                     'created_at',)
-                            ->with('sender')
+                                            WHEN sender = ".$id." THEN receiver 
+                                            WHEN receiver = ".$id." THEN sender 
+                                            END AS user_id"), 'users.name as patient_name')
+                            ->join('users', function($join) use($id) {
+                                $join->on('users.id', '=', \DB::raw("IF(messages.sender = ".$id.", messages.receiver, messages.sender)"));
+                            })
+                            ->distinct()
                             ->get();
-        foreach($messages as $message) {
-            $message->user = User::findOrFail($message->user_id);
+        //get last message with each patient
+        foreach ($patients as $patient) {
+            $patient->last_message = Message::where('sender', $id)
+                                            ->where('receiver', $patient->user_id)
+                                            ->orWhere('sender', $patient->user_id)
+                                            ->where('receiver', $id)
+                                            ->orderBy('created_at', 'desc')
+                                            ->first();
         }
-        return $messages;
+        return $patients;
     }
 
     /**

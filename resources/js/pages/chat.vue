@@ -2,22 +2,23 @@
 <admin-layout>
     <div style="height:100%" class="d-flex">
         <div style="height:100%;width:30%;" class="px-1">
-            <v-card outlined rounded="xl" style="height:100%;">
-                <v-card-title>
+            <v-card outlined rounded="xl" style="height:100%;" class="" ref="chatCard">
+                <v-card-title ref="chatCardTitle" class=" border-bottom">
                     Chats
                 </v-card-title>
-                <v-list class="py-0 mx-2" nav rounded>
-                    <v-list-item-group v-model="selectedDiscussion" color="red">
+                <v-divider class=""></v-divider>
+                <v-list class="py-0 mx-2" ref="discussionsList" nav rounded>
+                    <v-list-item-group ref="discussionsListGroup" v-model="selectedDiscussion" color="error" class="pr-2" style="overflow-y: auto;">
                         <v-list-item v-for="(discussion, index) in discussions" :key="index">
                             <v-list-item-avatar>
                                 <v-avatar :color="colors[index%10]" style="color:white">
-                                    {{getFirstLetter(discussion.patient.name)}}
+                                    {{getFirstLetter(discussion.patient_name)}}
                                 </v-avatar>
                             </v-list-item-avatar>
                             <v-list-item-content>
-                                <v-list-item-title>{{ discussion.patient.name }}</v-list-item-title>
+                                <v-list-item-title>{{ discussion.patient_name }}</v-list-item-title>
                                 <v-list-item-subtitle class="d-flex">
-                                    <div class=" text-truncate" style="max-width:80%;">{{ discussion.sender.id == discussion.user_id ? "You: " : ""}}{{ discussion.text }}</div>&nbsp;-<div>{{ formatDate(discussion.created_at) }}</div>
+                                    <div class=" text-truncate" style="max-width:80%;">{{ discussion.last_message.sender.id == $page.props.auth.user.id ? "You: " : ""}}{{ discussion.last_message.text }}</div>&nbsp;-<div>{{ formatDate(discussion.last_message.created_at) }}</div>
                                 </v-list-item-subtitle>
                             </v-list-item-content>
                         </v-list-item>
@@ -51,6 +52,7 @@ export default {
     props: {},
     data() {
         return {
+            maxDiscussionsListHeight: "",
             colors: [
                 "red",
                 "green",
@@ -65,51 +67,17 @@ export default {
                 "grey",
             ],
             selectedDiscussion: null,
-            discussions: [{
-                "user_id": 1,
-                "text": "Hello, I am Kaylah Nitzsche and I am a doctor.",
-                "sender": {
-                    "id": 1,
-                    "name": "Kaylah Nitzsche",
-                    "email": "jalon.johnson@example.org",
-                    "email_verified_at": "2023-04-02T18:37:06.000000Z",
-                    "is_patient": 0,
-                    "created_at": "2023-04-02T18:37:06.000000Z",
-                    "updated_at": "2023-04-02T18:37:06.000000Z"
-                },
-                "created_at": "2023-04-02T18:37:06.000000Z"
-            }, ]
-            // discussions: [{
-            //     patient: {
-            //         name: "Dali Spinoza"
-            //     },
-            //     message: {
-            //         text: "You are more likely to have a heart disease",
-            //         sender: "doctor",
-            //         timestamp: new Date(),
-            //     }
-            // }, {
-            //     patient: {
-            //         name: "Alexander The Great",
-            //     },
-            //     message: {
-            //         text: "You are less likely to have a heart disease",
-            //         sender: "doctor",
-            //         timestamp: new Date(),
-            //     }
-            // }, {
-            //     patient: {
-            //         name: "Christopher Colombus",
-            //     },
-            //     message: {
-            //         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            //         sender: "patient",
-            //         timestamp: new Date(),
-            //     }
-            // }, ]
+            discussions: [],
         };
     },
     methods: {
+        async getDiscussions() {
+            const resp = await axios.get(route('discussions',4))
+                .catch(error => {
+                    console.log(error)
+                })
+            return resp
+        },
         getFirstLetter(name) {
             let nameSplit = name.split(' ')
             return nameSplit[0][0] + nameSplit[nameSplit.length - 1][0]
@@ -148,7 +116,12 @@ export default {
     },
     computed: {},
     watch: {},
-    mounted() {},
+    async mounted() {
+        this.maxDiscussionsListHeight = this.$refs.chatCard.$el.clientHeight - this.$refs.chatCardTitle.clientHeight - 10
+        this.$refs.discussionsListGroup.$el.style.maxHeight = this.maxDiscussionsListHeight + "px"
+        const resp = await this.getDiscussions()
+        this.discussions = resp.data
+    },
     beforeDestroy() {}
 };
 </script>
