@@ -52,7 +52,7 @@
             <v-spacer></v-spacer>
             <div>
                 <v-badge class="mr-8" :content="3" :value="3" overlap dark>
-                    <v-icon class="notification-bell" color="red lighten-1" >
+                    <v-icon class="notification-bell" color="red lighten-1">
                         mdi-bell
                     </v-icon>
                 </v-badge>
@@ -174,14 +174,22 @@ export default {
     },
 };
 </script>
+
 <style>
+body,
+html {
+    margin: 0px !important;
+}
+
 *::-webkit-scrollbar {
     width: 16px;
 }
+
 *::-webkit-scrollbar-track {
     border-radius: 8px;
     background-color: white;
 }
+
 *::-webkit-scrollbar-thumb {
     height: 56px;
     border-radius: 8px;
@@ -189,6 +197,7 @@ export default {
     background-clip: content-box;
     background-color: #888;
 }
+
 *::-webkit-scrollbar-thumb:hover {
     background-color: #555;
 }
