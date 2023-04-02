@@ -1,32 +1,75 @@
 <template>
 <admin-layout>
     <div style="height:100%" class="d-flex flex-column">
-        <div class="mb-4 d-flex align-center justify-center">
+        <div class="mb-4 d-flex align-center justify-center flex-wrap">
             <div style="width:250px;" class="mr-5 white">
                 <div class="d-inline-flex">
                     <v-select v-model="block" @input="changePatient" :items="patients" item-text="name" item-value="id" label="Patient" dense outlined hide-details></v-select>
                 </div>
             </div>
-            <div class="">
-                <v-row>
-                    <v-col v-for="(overview, index) in overviews" :key="index">
+            <div class="d-flex flex-wrap justify-center">
+                    <div v-for="(overview, index) in overviews" :key="index" class="mx-1">
                         <v-chip :color="overview.color" pill class="elevation-2">
                             <v-icon right>
                                 {{ overview.icon }}
                             </v-icon>
                             <b class="ml-3">{{ overview.text }}</b> : {{ patient[index] }}
                         </v-chip>
-                    </v-col>
-                </v-row>
+                    </div>
             </div>
         </div>
-        <div style="" class=" flex-grow-1">
+        <div style="" class="flex-grow-1" v-if="$vuetify.breakpoint.mdAndUp">
             <v-row align="center" justify="center" style="height:50%">
                 <v-col md="6" cols="12" v-for="chart in chartsP1" :key="chart.id" style="height:100%">
                     <v-card class="" width="100%" height="100%">
                         <apexchart :ref="chart.id" height="94%" width="100%" type="line" :options="chart.chartOptions" :series="chart.series"></apexchart>
                     </v-card>
                 </v-col>
+                <v-col md="6" cols="12">
+                    <v-row class="px-10">
+                        <v-col style="height:100%" v-for="(item, index) in readings" :key="index">
+                            <div >
+                                <v-sheet elevation="2" rounded color="white">
+                                    <v-container fluid class=" pa-0">
+                                        <div class="mx-auto" style="height: 105px; width: 105px; background-color: white; mix-blend-mode: multiply;">
+                                            <v-img class="imgStyle" :src="item.image"></v-img>
+                                        </div>
+                                        <div style="background-color: #e3e3e3" class="pb-1">
+                                            <div style="color:black" class="text-caption pt-1 text-center">
+                                                <b>{{ item.text }}</b>
+                                            </div>
+                                            <div style="color:black" class="text-caption text-center">
+                                                {{ item.value + item.unit }}
+                                            </div>
+                                            <div style="color:black" class="text-caption text-center pt-0 pb-0">
+                                                <small>Status:
+                                                    <v-chip v-if="item.text == 'Overall'" x-small class=" text-uppercase" :color="dangerSteps[sick].color">
+                                                        {{ dangerSteps[sick].text }}
+                                                    </v-chip>
+                                                    <v-chip v-else x-small class=" text-uppercase" :color="dangerSteps[item.status].color">
+                                                        {{ dangerSteps[item.status].text }}
+                                                    </v-chip>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </v-container>
+                                </v-sheet>
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-col>
+                <v-col md="6" cols="12" v-for="chart in chartsP2" :key="chart.id" style="height:100%">
+                    <v-card class="" width="100%" height="100%">
+                        <apexchart :ref="chart.id" height="94%" width="100%" type="line" :options="chart.chartOptions" :series="chart.series"></apexchart>
+                    </v-card>
+                </v-col>
+            </v-row>
+        </div>
+
+        <!-- Tablets/Phones -->
+
+        <div style="" class=" flex-grow-1" v-if="$vuetify.breakpoint.smAndDown">
+            <v-row align="center" justify="center" style="height:50%">
                 <v-col md="6" cols="12">
                     <v-row class="px-10">
                         <v-col style="height:100%" v-for="(item, index) in readings" :key="index">
@@ -60,9 +103,14 @@
                         </v-col>
                     </v-row>
                 </v-col>
-                <v-col md="6" cols="12" v-for="chart in chartsP2" :key="chart.id" style="height:100%">
+                <v-col md="6" cols="12" v-for="chart in chartsP1" :key="chart.id" style="">
                     <v-card class="" width="100%" height="100%">
-                        <apexchart :ref="chart.id" height="94%" width="100%" type="line" :options="chart.chartOptions" :series="chart.series"></apexchart>
+                        <apexchart :ref="chart.id" width="100%" type="line" :options="chart.chartOptions" :series="chart.series"></apexchart>
+                    </v-card>
+                </v-col>
+                <v-col md="6" cols="12" v-for="chart in chartsP2" :key="chart.id">
+                    <v-card class="" width="100%">
+                        <apexchart :ref="chart.id" width="100%" type="line" :options="chart.chartOptions" :series="chart.series"></apexchart>
                     </v-card>
                 </v-col>
             </v-row>
