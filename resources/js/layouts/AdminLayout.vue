@@ -174,3 +174,22 @@ export default {
     },
 };
 </script>
+<style>
+*::-webkit-scrollbar {
+    width: 16px;
+}
+*::-webkit-scrollbar-track {
+    border-radius: 8px;
+    background-color: white;
+}
+*::-webkit-scrollbar-thumb {
+    height: 56px;
+    border-radius: 8px;
+    border: 4px solid transparent;
+    background-clip: content-box;
+    background-color: #888;
+}
+*::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+</style>

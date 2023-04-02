@@ -33,7 +33,7 @@
                             <div>
                                 <v-sheet elevation="2" rounded color="white">
                                     <v-container fluid class=" pa-0">
-                                        <div class="mx-auto" style="height: 105px; width: 105px;">
+                                        <div class="mx-auto" style="height: 105px; width: 105px; background-color: white; mix-blend-mode: multiply;">
                                             <v-img class="imgStyle" :src="item.image"></v-img>
                                         </div>
                                         <div style="background-color: #e3e3e3" class="pb-1">

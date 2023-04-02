@@ -1,8 +1,8 @@
 <template>
 <admin-layout>
-    <div style="height:100%" class="d-flex justify-center">
+    <div class="d-flex justify-center">
         <v-card width="40%">
-            <v-toolbar dense dark color="red" class="text-h6">
+            <v-toolbar dense dark color="primary" class="text-h6">
                 <v-toolbar-title>Heart Disease Analysis</v-toolbar-title>
             </v-toolbar>
             <v-card-text class="pb-0">Please fill this form to run the analysis!</v-card-text>
@@ -50,7 +50,7 @@
                         </v-col>
                     </v-row>
                     <v-card-actions class="d-flex justify-end">
-                        <v-btn type="submit" color="red" dark :loading="analysing">
+                        <v-btn type="submit" color="primary" dark :loading="analysing">
                             <v-icon>mdi-magnify</v-icon>Analyse
                         </v-btn>
                     </v-card-actions>
