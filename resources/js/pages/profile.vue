@@ -117,31 +117,31 @@ export default {
                         method: this.changePassword
                     }
                 },
-                {
-                    id: 2,
-                    valid:true,
-                    form:'token',
-                    title: "Generate API Token",
-                    subtitle: "Create an API Token for your applications.",
-                    inputs: [{
-                            label: "Name",
-                            data: "",
-                            readonly: false
-                        },
-                        {
-                            label: "API Token",
-                            data: "",
-                            readonly: true
-                        }
-                    ],
-                    rules: {
-                        required: value => !!value || 'Required.',
-                    },
-                    button: {
-                        name: "Generate",
-                        method: this.getApiToken
-                    }
-                }
+                // {
+                //     id: 2,
+                //     valid:true,
+                //     form:'token',
+                //     title: "Generate API Token",
+                //     subtitle: "Create an API Token for your applications.",
+                //     inputs: [{
+                //             label: "Name",
+                //             data: "",
+                //             readonly: false
+                //         },
+                //         {
+                //             label: "API Token",
+                //             data: "",
+                //             readonly: true
+                //         }
+                //     ],
+                //     rules: {
+                //         required: value => !!value || 'Required.',
+                //     },
+                //     button: {
+                //         name: "Generate",
+                //         method: this.getApiToken
+                //     }
+                // }
             ]
         }
     },

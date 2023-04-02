@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\HospitalController;
 
 use App\Http\Controllers\Charts\HeartRateController;
+use App\Http\Controllers\MessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,20 +27,14 @@ use App\Http\Controllers\Charts\HeartRateController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::prefix('v1')->group(function () {
-    Route::get('patient', [PatientController::class, 'index']);
-});
-Route::prefix('health')->group(function() {
-    //Chart Routes
-    Route::resource('co2', Co2Controller::class)->only(['index', 'store']);
-    Route::resource('humidity', HumidityController::class)->only(['index', 'store']);
-    Route::resource('temperature', TemperatureController::class)->only(['index', 'store']);
-    Route::resource('movement', MovementController::class)->only(['index', 'store']);
+Route::prefix('v1')->middleware('auth.basic')->group(function () {
+    Route::prefix('chat')->group(function() {
 
-    //Card Routes
-    Route::prefix('heart-rate')->group(function() {
-        Route::get('get-heart-rate', [HeartRateController::class, 'index'])->name("getHeartRate");
-        Route::post('set-heart-rate', [HeartRateController::class, 'store'])->name("setHeartRate");
+        Route::get('discussions/{id}', [MessageController::class, 'getDiscussions'])->name('discussions');
+
+        Route::post('store', [MessageController::class, 'store'])->name('store');
+        Route::get('{sender}/{receiver}', [MessageController::class, 'show'])->name('show');
+        Route::delete('{id}', [MessageController::class, 'destroy'])->name('destroy');
+        
     });
-
 });

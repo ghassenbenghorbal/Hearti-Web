@@ -77,6 +77,7 @@ export default {
         email: null,
         password: null,
         password_confirmation: null,
+        isPatient: 0,
       }),
     };
   },

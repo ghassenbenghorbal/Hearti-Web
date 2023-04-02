@@ -16,7 +16,7 @@
                             </v-list-item-avatar>
                             <v-list-item-content>
                                 <v-list-item-title>{{ discussion.patient.name }}</v-list-item-title>
-                                <v-list-item-subtitle class="d-flex"><div class=" text-truncate" style="max-width:80%;">{{ discussion.message.sender == "doctor" ? "You: " : ""}}{{ discussion.message.text }}</div> - <div>{{ formatDate(discussion.message.timestamp) }}</div></v-list-item-subtitle>
+                                <v-list-item-subtitle class="d-flex"><div class=" text-truncate" style="max-width:80%;">{{ discussion.message.sender == "doctor" ? "You: " : ""}}{{ discussion.message.text }}</div>&nbsp;-<div>{{ formatDate(discussion.message.timestamp) }}</div></v-list-item-subtitle>
                             </v-list-item-content>
                         </v-list-item>
                     </v-list-item-group>
