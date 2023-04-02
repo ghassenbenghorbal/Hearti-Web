@@ -75,6 +75,15 @@
                         </v-list-item-icon>
                     </v-list-item>
                     <v-divider></v-divider>
+                    <v-list-item link @click="switchDarkMode()">
+                        <v-list-item-content>
+                            <v-list-item-title>{{darkMode ? "Light Mode" : "Dark Mode"}}</v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-icon style="padding-right:2px">
+                            <v-icon>{{darkMode ? "mdi-weather-sunny" : "mdi-weather-night"}}</v-icon>
+                        </v-list-item-icon>
+                    </v-list-item>
+                    <v-divider></v-divider>
                     <v-list-item link @click="logout()">
                         <v-list-item-content>
                             <v-list-item-title>Log Out</v-list-item-title>
@@ -98,12 +107,20 @@
 
 <script>
 import ApplicationLogo from "../components/ApplicationLogo.vue";
+import {
+    enable as enableDarkMode,
+    disable as disableDarkMode,
+    auto as followSystemColorScheme,
+    exportGeneratedCSS as collectCSS,
+    isEnabled as isDarkReaderEnabled
+} from 'darkreader';
 export default {
     components: {
         ApplicationLogo
     },
     data() {
         return {
+            darkMode: isDarkReaderEnabled(),
             drawer: false,
             items: [{
                     title: "Home",
@@ -159,6 +176,14 @@ export default {
         },
     },
     methods: {
+        switchDarkMode() {
+            this.darkMode ? disableDarkMode() : enableDarkMode({
+                                                    brightness: 100,
+                                                    contrast: 90,
+                                                    sepia: 10,
+                                                });
+            this.darkMode = !this.darkMode
+        },
         profile() {
             this.$inertia.get('/profile')
         },

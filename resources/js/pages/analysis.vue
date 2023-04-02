@@ -2,7 +2,7 @@
 <admin-layout>
     <div class="d-flex justify-center">
         <v-card width="40%">
-            <v-toolbar dense dark color="primary" class="text-h6">
+            <v-toolbar dense dark color="red" class="text-h6">
                 <v-toolbar-title>Heart Disease Analysis</v-toolbar-title>
             </v-toolbar>
             <v-card-text class="pb-0">Please fill this form to run the analysis!</v-card-text>
@@ -225,12 +225,14 @@ export default {
     },
     methods: {
         async submitForm() {
-            this.analysing = true;
-            axios.post("http://127.0.0.1:8000/predict", this.form).then(response => {
-                this.analysing = false;
-                this.result = response.data.heart_disease_risk;
-                this.resultDialog = true;
-            });
+            if (this.$refs.form.validate()) {
+                this.analysing = true;
+                axios.post("http://127.0.0.1:8000/predict", this.form).then(response => {
+                    this.analysing = false;
+                    this.result = response.data.heart_disease_risk;
+                    this.resultDialog = true;
+                });
+            }
         }
     },
     computed: {},
