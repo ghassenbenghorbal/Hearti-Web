@@ -94,6 +94,24 @@ class MessageController extends Controller
         }
         return $patients;
     }
+    public function getMessages($sender, $receiver)
+    {
+        User::findOrFail($sender);
+        User::findOrFail($receiver);
+
+        $messages = Message::where(function ($query) use ($sender, $receiver) {
+                                $query->where('sender', $sender)
+                                    ->where('receiver', $receiver);
+                            })
+                            ->orWhere(function ($query) use ($sender, $receiver) {
+                                $query->where('sender', $receiver)
+                                    ->where('receiver', $sender);
+                            })
+                            ->orderBy('created_at', 'desc')
+                            ->with('sender', 'receiver')
+                            ->get();
+        return $messages;
+    }
 
     /**
      * Show the form for editing the specified resource.
