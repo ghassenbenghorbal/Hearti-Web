@@ -1,45 +1,46 @@
 <template>
 <admin-layout>
-    <div style="height:100%" class="d-flex">
-        <div style="height:100%;width:30%;" class="px-1">
-            <v-card outlined rounded="xl" style="height:100%;" class="pb-1" ref="chatCard">
+    <div style="position: absolute; inset: 0;" class="d-flex pa-3">
+        <div style="position: relative; inset: 0;width:30%;" class="px-1 d-flex flex-column">
+            <v-card outlined rounded="xl" style="height: 100%;" class="pr-1" ref="chatCard">
                 <v-card-title ref="chatCardTitle" class="py-2">
                     Chats
                 </v-card-title>
                 <v-divider class=""></v-divider>
-                <v-list class="pt-1 pb-0 mx-2" ref="discussionsList" nav rounded>
-                    <v-list-item-group ref="discussionsListGroup" v-model="selectedDiscussion" color="error" class="pr-2" style="overflow-y: auto;">
-                        <v-list-item v-for="(discussion, index) in discussions" :key="index" v-if="!loadingDiscussions">
-                            <v-list-item-avatar>
-                                <v-avatar :color="colors[index%10]" style="color:white">
-                                    {{getFirstLetter(discussion.patient_name)}}
-                                </v-avatar>
-                            </v-list-item-avatar>
-                            <v-list-item-content>
-                                <v-list-item-title>{{ discussion.patient_name }}</v-list-item-title>
-                                <v-list-item-subtitle class="d-flex">
-                                    <div class=" text-truncate" style="max-width:80%;">{{ discussion.last_message.sender.id == $page.props.auth.user.id ? "You: " : ""}}{{ discussion.last_message.text }}</div>&nbsp;-<div>{{ formatDate(discussion.last_message.created_at) }}</div>
-                                </v-list-item-subtitle>
-                            </v-list-item-content>
-                        </v-list-item>
-                        <v-skeleton-loader v-if="loadingDiscussions" v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
-                    </v-list-item-group>
-                </v-list>
+                <div v-resize="onContainerResize" ref="discussionsContainer" style="height:100%;overflow-y: auto;">
+                    <v-list class="pt-1 pb-0 mx-2 flex-fill" ref="discussionsList" nav rounded>
+                        <v-list-item-group ref="discussionsListGroup" v-model="selectedDiscussion" color="error" class="pr-2">
+                            <v-list-item v-for="(discussion, index) in discussions" :key="index" v-if="!loadingDiscussions">
+                                <v-list-item-avatar>
+                                    <v-avatar :color="colors[index%10]" style="color:white">
+                                        {{getFirstLetter(discussion.patient_name)}}
+                                    </v-avatar>
+                                </v-list-item-avatar>
+                                <v-list-item-content>
+                                    <v-list-item-title>{{ discussion.patient_name }}</v-list-item-title>
+                                    <v-list-item-subtitle class="d-flex">
+                                        <div class=" text-truncate" style="max-width:80%;">{{ discussion.last_message.sender.id == $page.props.auth.user.id ? "You: " : ""}}{{ discussion.last_message.text }}</div>&nbsp;-<div>{{ formatDate(discussion.last_message.created_at) }}</div>
+                                    </v-list-item-subtitle>
+                                </v-list-item-content>
+                            </v-list-item>
+                            <v-skeleton-loader v-if="loadingDiscussions" v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
+                        </v-list-item-group>
+                    </v-list>
+                </div>
             </v-card>
         </div>
 
-        <div style="height:100%;" class="px-1 flex-grow-1">
+        <div style="position: relative; inset: 0;" class="px-1 flex-grow-1">
             <v-card outlined rounded="xl" style="height:100%;">
                 <v-card-title class="py-2">
                     {{ discussions[selectedDiscussion] ? discussions[selectedDiscussion].patient_name : "Messages" }}
                 </v-card-title>
                 <v-divider></v-divider>
-                <div ref="messagesContainer" class="d-flex flex-column" style="">
-
-                    <div class="flex-fill pt-1 px-5">
-                        <v-list reverse class="py-0 mx-2" ref="discussionsList" rounded>
-                            <div ref="messagesListGroup" class="d-flex flex-column-reverse pr-2" style="overflow-y: auto;">
-                                <v-list-item class="my-4" v-for="(discussion, index) in discussions" :key="index" v-if="!loadingDiscussions">
+                <div class="d-flex flex-column" style="height: 100%;" ref="messagesContainer">
+                    <div class="flex-fill pt-1 px-5" style="height:100%; overflow-y: auto;">
+                        <v-list reverse class="py-0 mx-2" ref="messagesListGroup" rounded>
+                            <div ref="" class="d-flex flex-column-reverse pr-2" style="overflow-y: auto;">
+                                <v-list-item class="" v-for="(discussion, index) in discussions" :key="index" v-if="!loadingDiscussions">
                                     <v-list-item-avatar>
                                         <v-avatar :color="colors[index%10]" style="color:white">
                                             {{getFirstLetter(discussion.patient_name)}}
@@ -48,7 +49,7 @@
                                     <v-list-item-content>
                                         <v-list-item-title>{{ discussion.patient_name }}</v-list-item-title>
                                         <v-list-item-subtitle class="d-flex">
-                                            <v-chip><div class="" style="max-width:100%;">{{ discussion.last_message.sender.id == $page.props.auth.user.id ? "You: " : ""}}{{ discussion.last_message.text }}</div>&nbsp;-<div>{{ formatDate(discussion.last_message.created_at) }}</div></v-chip>
+                                            <v-chip><div class="" style="max-width:100%;">{{ discussion.last_message.sender.id == $page.props.auth.user.id ? "You: " : ""}}{{ discussion.last_message.text }}</div><div class="text-caption ml-3 mt-3 pr-1 grey--text text--darken-2">{{ formatMessageBubbleDate(discussion.last_message.created_at) }}</div></v-chip>
                                         </v-list-item-subtitle>
                                     </v-list-item-content>
                                 </v-list-item>
@@ -56,7 +57,7 @@
                                 <v-list-item class="ml-auto" v-for="(discussion, index) in discussions" :key="index" v-if="!loadingDiscussions">
                                     <v-list-item-content>
                                         <v-list-item-subtitle class="d-flex">
-                                            <v-chip color="red lighten-1" dark><div class="" style="max-width:100%;">{{ discussion.last_message.sender.id == $page.props.auth.user.id ? "You: " : ""}}{{ discussion.last_message.text }}</div>&nbsp;-<div>{{ formatDate(discussion.last_message.created_at) }}</div></v-chip>
+                                            <v-chip color="red lighten-1" dark><div class="" style="max-width:100%;">{{ discussion.last_message.sender.id == $page.props.auth.user.id ? "You: " : ""}}{{ discussion.last_message.text }}</div><div class="text-caption ml-3 mt-3 pr-1 grey--text text--lighten-3">{{ formatMessageBubbleDate(discussion.last_message.created_at) }}</div></v-chip>
                                         </v-list-item-subtitle>
                                     </v-list-item-content>
                                 </v-list-item>
@@ -133,6 +134,16 @@ export default {
             let nameSplit = name.split(' ')
             return nameSplit[0][0] + nameSplit[nameSplit.length - 1][0]
         },
+        formatMessageBubbleDate(dateString) {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) {
+                return 'invalid date';
+            }
+            let time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            let dateStr = date.toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' });
+            return `${time} ${dateStr}`;
+            
+        },
         formatDate(dateString) {
             const date = new Date(dateString);
             if (isNaN(date.getTime())) {
@@ -164,14 +175,25 @@ export default {
                 return `${Math.floor(diffInMs / year)}y`;
             }
         },
-        handleResize() {
+        onContainerResize() {
             this.maxDiscussionsListHeight = this.$refs.chatCard.$el.clientHeight - this.$refs.chatCardTitle.clientHeight - 10
-            this.$refs.discussionsListGroup.$el.style.maxHeight = this.maxDiscussionsListHeight + "px"
+            this.$refs.discussionsContainer.style.maxHeight = this.maxDiscussionsListHeight + "px"
 
-            this.$refs.messagesContainer.style.maxHeight = this.$refs.discussionsListGroup.$el.style.maxHeight
-            this.$refs.messagesContainer.style.height = this.$refs.discussionsListGroup.$el.style.maxHeight
+            this.$refs.messagesContainer.style.maxHeight = this.$refs.discussionsContainer.style.maxHeight
 
-            this.$refs.messagesListGroup.style.maxHeight = (this.maxDiscussionsListHeight - this.$refs.sendMessageInput.clientHeight) + "px"
+            const discussionsContentHeight = this.$refs.discussionsList.$el.clientHeight;
+            const discussionsContainerHeight = this.$refs.discussionsContainer.clientHeight;
+
+            const messagesContentHeight = this.$refs.messagesListGroup.$el.clientHeight;
+            const messagesContainerHeight = this.$refs.messagesContainer.clientHeight - this.$refs.sendMessageInput.clientHeight;
+            console.log(messagesContentHeight, messagesContainerHeight)
+
+            if (discussionsContentHeight > discussionsContainerHeight) {
+                this.$refs.discussionsList.$el.style.maxHeight = `${containerHeight}px`;
+            }
+            if(messagesContentHeight > messagesContainerHeight) {
+                this.$refs.messagesListGroup.$el.style.maxHeight = `${messagesContainerHeight}px`;
+            }
         },
     },
     computed: {
@@ -182,17 +204,13 @@ export default {
         }
     },
     created() {
-        window.addEventListener("resize", this.handleResize);
     },
     async mounted() {
         const resp = await this.getDiscussions()
         this.discussions = resp.data
         this.loadingDiscussions = false
-
-        this.handleResize();
     },
     beforeDestroy() {
-        window.removeEventListener("resize", this.handleResize);
     }
 };
 </script>
