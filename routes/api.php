@@ -29,7 +29,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::prefix('v1')->middleware('auth')->group(function () {
     Route::prefix('chat')->group(function() {
-        Route::get('discussions/{id?}', [MessageController::class, 'getDiscussions'])->name('discussions');
+        Route::get('discussions/{id}', [MessageController::class, 'getDiscussions'])->name('discussions');
+        Route::get('messages/{sender}/{receiver}', [MessageController::class, 'getMessages'])->name('messages');
         Route::post('store', [MessageController::class, 'store'])->name('store');
         Route::get('{sender}/{receiver}', [MessageController::class, 'show'])->name('show');
         Route::delete('{id}', [MessageController::class, 'destroy'])->name('destroy');
