@@ -33,11 +33,17 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
         ]);
+        if($request->email != Auth::user()->email)
+        {
+            $request->validate([
+                'email' => 'required|string|email|max:255|unique:users',
+            ]);
+        }
         $user = Auth::user();
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->save();
         Auth::login($user);
         return back()->with('success', "Profile changed successfully!");
     }

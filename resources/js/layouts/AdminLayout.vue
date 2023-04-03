@@ -64,7 +64,7 @@
                         <v-icon>mdi-chevron-down</v-icon>
                     </v-btn>
                 </template>
-                <v-list dense width="200" max-width="300" class="py-0">
+                <v-list dense min-width="200" class="py-0">
                     <v-subheader class="pl-4">Manage Account</v-subheader>
                     <v-list-item link @click="profile()">
                         <v-list-item-content>

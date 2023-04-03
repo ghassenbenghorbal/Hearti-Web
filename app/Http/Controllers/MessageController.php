@@ -71,6 +71,7 @@ class MessageController extends Controller
     public function getDiscussions($id)
     {
         $user = User::findOrFail($id);
+        
         $patients = Message::where('sender', $id)
                             ->orWhere('receiver', $id)
                             ->select(\DB::raw("CASE 

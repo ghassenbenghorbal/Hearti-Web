@@ -189,6 +189,10 @@ export default {
             })
         }
     },
+    mounted() {
+        this.items[0].inputs[0].data = this.$page.props.auth.user.name
+        this.items[0].inputs[1].data = this.$page.props.auth.user.email
+    },
 
 }
 </script>
