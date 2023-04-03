@@ -2,7 +2,7 @@
 <admin-layout>
     <div class="d-flex justify-center">
         <v-card width="40%">
-            <v-toolbar dense dark color="red" class="text-h6">
+            <v-toolbar dense dark color="error" class="text-h6">
                 <v-toolbar-title>Heart Disease Analysis</v-toolbar-title>
             </v-toolbar>
             <v-card-text class="pb-0">Please fill this form to run the analysis!</v-card-text>
