@@ -20,7 +20,7 @@ class CreateMessagesTable extends Migration
             $table->foreign('sender')->references('id')->on('users');
             $table->unsignedBigInteger('receiver');
             $table->foreign('receiver')->references('id')->on('users');
-            $table->string('attachement')->default(null);
+            $table->string('attachement')->nullable()->default(null);
             $table->softDeletes();
             $table->timestamps();
         });

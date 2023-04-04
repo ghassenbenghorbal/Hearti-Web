@@ -47,8 +47,10 @@ class MessageController extends Controller
             'text' => $request->text,
             'sender' => $request->sender,
             'receiver' => $request->receiver,
-            'attachement' => $request->attachement,
+            'attachement' => $request->attachement ? $request->attachement->store('attachements') : "attachement",
         ]);
+        $message->sender = User::findOrFail($message->sender);
+        $message->receiver = User::findOrFail($message->receiver);
         return $message;
     }
 
@@ -107,7 +109,7 @@ class MessageController extends Controller
                                 $query->where('sender', $receiver)
                                     ->where('receiver', $sender);
                             })
-                            ->orderBy('created_at', 'desc')
+                            ->orderBy('created_at', 'asc')
                             ->with('sender', 'receiver')
                             ->get();
         return $messages;
