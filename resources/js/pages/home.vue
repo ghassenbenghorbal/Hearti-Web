@@ -9,26 +9,26 @@
                 </div>
             </div>
             <div class="d-flex flex-wrap justify-center">
-                    <div v-for="(overview, index) in overviews" :key="index" class="mx-1">
-                        <v-chip :color="overview.color" pill class="elevation-2">
-                            <v-icon right>
-                                {{ overview.icon }}
-                            </v-icon>
-                            <b class="ml-3">{{ overview.text }}</b> : {{ patient[index] }}
-                        </v-chip>
-                    </div>
+                <div v-for="(overview, index) in overviews" :key="index" class="mx-1">
+                    <v-chip :color="overview.color" pill class="elevation-2">
+                        <v-icon right>
+                            {{ overview.icon }}
+                        </v-icon>
+                        <b class="ml-3">{{ overview.text }}</b> : {{ patient[index] }}
+                    </v-chip>
+                </div>
             </div>
         </div>
         <div class="mb-4 d-flex align-center justify-center flex-wrap" v-if="$vuetify.breakpoint.mdAndDown">
             <div class="d-flex flex-wrap justify-center">
-                    <div v-for="(overview, index) in overviews" :key="index" class="mx-1 mb-1">
-                        <v-chip :color="overview.color" pill class="elevation-2 text-wrap py-5">
-                            <v-icon right>
-                                {{ overview.icon }}
-                            </v-icon>
-                            <b class="ml-3">{{ overview.text }}</b> : {{ patient[index] }}
-                        </v-chip>
-                    </div>
+                <div v-for="(overview, index) in overviews" :key="index" class="mx-1 mb-1">
+                    <v-chip :color="overview.color" pill class="elevation-2 text-wrap py-5">
+                        <v-icon right>
+                            {{ overview.icon }}
+                        </v-icon>
+                        <b class="ml-3">{{ overview.text }}</b> : {{ patient[index] }}
+                    </v-chip>
+                </div>
             </div>
             <div style="width:250px;" class="mt-3 mr-5 white">
                 <div class="d-inline-flex">
@@ -50,8 +50,8 @@
                             <div class="mx-auto">
                                 <v-sheet elevation="2" rounded color="white">
                                     <v-container fluid class=" pa-0">
-                                        <div class="mx-auto" style="height: 105px; width: 105px; background-color: white; mix-blend-mode: multiply;">
-                                            <v-img class="imgStyle" :src="item.image"></v-img>
+                                        <div class="mx-auto" style=" background-color: white; mix-blend-mode: multiply;">
+                                            <v-img class="imgStyle" :contain="true" :aspect-ratio="4/3" :src="item.image"></v-img>
                                         </div>
                                         <div style="background-color: #e3e3e3" class="pb-1">
                                             <div style="color:black" class="text-caption pt-1 text-center">
@@ -89,15 +89,15 @@
 
         <div style="" class=" flex-grow-1" v-if="$vuetify.breakpoint.smAndDown">
             <v-row align="center" justify="center" style="height:50%">
-                
+
                 <v-col md="6" cols="12">
                     <v-row class="px-10">
                         <v-col cols="6" md="3" lg="3" xl="3" style="height:100%" v-for="(item, index) in readings" :key="index">
                             <div>
                                 <v-sheet elevation="2" rounded color="white">
                                     <v-container fluid class=" pa-0">
-                                        <div class="mx-auto" style="height: 105px; width: 105px; background-color: white; mix-blend-mode: multiply;">
-                                            <v-img class="imgStyle" :src="item.image"></v-img>
+                                        <div class="mx-auto" style=" background-color: white; mix-blend-mode: multiply;">
+                                            <v-img class="imgStyle" :contain="true" :aspect-ratio="4/3" :src="item.image"></v-img>
                                         </div>
                                         <div style="background-color: #e3e3e3" class="pb-1">
                                             <div style="color:black" class="text-caption pt-1 text-center">
@@ -204,7 +204,7 @@ export default {
                 {
                     text: "Overall",
                     value: "-",
-                    image: "https://media.istockphoto.com/id/1133812963/vector/love-icon-or-valentines-day-sign-designed-for-celebration.jpg?s=612x612&w=0&k=20&c=mmDpiIJO0hVaqkVP7lvzpD9iZKg9Z5TMOIRPOEUZiig=",
+                    image: "https://cdn-icons-png.flaticon.com/512/1869/1869504.png",
                     status: 0,
                     unit: "-"
                 }
