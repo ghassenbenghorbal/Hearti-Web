@@ -9,10 +9,28 @@ import { Link } from "@inertiajs/inertia-vue";
 import vuetify from "./plugins/vuetify";
 import { InertiaProgress } from "@inertiajs/progress";
 
-import VueApexCharts from 'vue-apexcharts'
-Vue.use(VueApexCharts)
+import VueApexCharts from "vue-apexcharts";
+Vue.use(VueApexCharts);
 
-Vue.component('apexchart', VueApexCharts)
+Vue.component("apexchart", VueApexCharts);
+
+import socketio from "socket.io-client";
+import VueSocketIO from "vue-socket.io";
+
+export const SocketInstance = socketio("http://localhost:3000",{
+  transports: ['websocket'],
+  autoConnect: false,
+  auth: {
+    token: 'abc'
+  }
+});
+
+Vue.use(
+  new VueSocketIO({
+    debug: true,
+    connection: SocketInstance
+  })
+);
 
 Vue.use(InertiaPlugin);
 Vue.component("Link", Link);
