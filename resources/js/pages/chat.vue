@@ -1,5 +1,15 @@
 <template>
 <admin-layout>
+    <v-snackbar v-model="isConnected" color="green" :timeout="-1" outlined top right>
+        <div>
+            <p>We're connected to the server!</p>
+            <p>Message from server: "{{socketMessage}}"</p>
+        </div>
+        <div class="d-flex justify-content-between">
+            <v-btn text color="primary" @click.native="isConnected = false">Close</v-btn>
+            <v-btn color="green" outlined @click="pingServer()">Ping Server</v-btn>
+        </div>
+    </v-snackbar>
     <div style="position: absolute; inset: 0;" class="d-flex pa-3">
         <div style="position: relative; inset: 0;width:30%;" class="px-1 d-flex flex-column">
             <v-card outlined rounded="xl" style="height: 100%;" class="pr-1" ref="chatCard">
@@ -102,6 +112,9 @@ export default {
     props: {},
     data() {
         return {
+            users: [],
+            isConnected: false,
+            socketMessage: '',
             maxDiscussionsListHeight: "",
             colors: [
                 "red",
@@ -125,10 +138,51 @@ export default {
             isSendingMessage: false,
         };
     },
+    sockets: {
+        connect() {
+            // Fired when the socket connects.
+            this.isConnected = true;
+        },
+
+        disconnect() {
+            this.isConnected = false;
+        },
+
+        connectionError(error) {
+            console.log(data)
+        },
+        users(users) {
+            users.forEach((user) => {
+                user.self = user.userID === socket.id;
+                initReactiveProperties(user);
+            });
+            // put the current user first, and then sort by username
+            this.users = users.sort((a, b) => {
+                if (a.self) return -1;
+                if (b.self) return 1;
+                if (a.username < b.username) return -1;
+                return a.username > b.username ? 1 : 0;
+            });
+        },
+        userConnected(user) {
+            initReactiveProperties(user);
+            this.users.push(user);
+        },
+    },
     methods: {
+        pingServer() {
+            // Send the "pingServer" event to the server.
+            this.$socket.emit('pingServer', 'PING!')
+        },
         async sendMessage() {
             this.isSendingMessage = true;
-            if (this.newMessage.length > 0 && this.newMessage.length <= 255) {
+            if (this.newMessage.length > 0 && this.newMessage.length <= 255 && this.selectedDiscussion >= 0) {
+
+                socket.emit("privateMessage", {
+                    content: this.newMessage,
+                    to: this.selectedUser.userID,
+                });
+
                 const resp = await axios
                     .post(
                         route("messages.store"), {
@@ -251,7 +305,7 @@ export default {
             }
             this.scrollDown();
         },
-        scrollDown(){
+        scrollDown() {
             this.$refs.scrollContainer.scrollTop = this.$refs.scrollContainer.scrollHeight;
         }
     },
