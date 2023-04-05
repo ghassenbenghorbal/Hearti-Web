@@ -67,7 +67,7 @@
                                     <v-list-item-content>
                                         <v-list-item-title v-if="discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id != $page.props.auth.user.id">{{discussions[selectedDiscussion].patient_name}}</v-list-item-title>
                                         <v-list-item-subtitle class="d-flex">
-                                            <v-chip :color="discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id == $page.props.auth.user.id? 'red lighten-1': ''" :dark="discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id == $page.props.auth.user.id">
+                                            <v-chip class="text-wrap" style="height:fit-content" :color="discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id == $page.props.auth.user.id? 'red lighten-1': ''" :dark="discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id == $page.props.auth.user.id">
                                                 <div class="" style="max-width:100%;">
                                                     {{ discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].text }}
                                                 </div>
@@ -345,7 +345,6 @@ export default {
             if (messagesContentHeight > messagesContainerHeight) {
                 this.$refs.messagesListGroup.$el.style.maxHeight = `${messagesContainerHeight}px`;
             }
-            this.scrollDown();
         },
         scrollDown() {
             this.$refs.scrollContainer.scrollTop = this.$refs.scrollContainer.scrollHeight;
