@@ -1,6 +1,6 @@
 <template>
 <admin-layout>
-    <v-snackbar v-model="isConnected" color="green" :timeout="-1" outlined top right>
+    <!-- <v-snackbar v-model="isConnected" color="green" :timeout="-1" outlined top right>
         <div>
             <p>We're connected to the server!</p>
             <p>Message from server: "{{socketMessage}}"</p>
@@ -9,7 +9,7 @@
             <v-btn text color="primary" @click.native="isConnected = false">Close</v-btn>
             <v-btn color="green" outlined @click="pingServer()">Ping Server</v-btn>
         </div>
-    </v-snackbar>
+    </v-snackbar> -->
     <div style="position: absolute; inset: 0;" class="d-flex pa-3">
         <div style="position: relative; inset: 0;width:30%;" class="px-1 d-flex flex-column">
             <v-card outlined rounded="xl" style="height: 100%;" class="pr-1" ref="chatCard">
@@ -27,7 +27,9 @@
                                     </v-avatar>
                                 </v-list-item-avatar>
                                 <v-list-item-content>
-                                    <v-list-item-title>{{discussion.patient_name}}</v-list-item-title>
+                                    <v-list-item-title><span>{{discussion.patient_name}}</span>
+                                        <v-icon v-if="discussion.connected" color="green">mdi-circle-medium</v-icon>
+                                    </v-list-item-title>
                                     <v-list-item-subtitle class="d-flex">
                                         <div class=" text-truncate" style="max-width:80%;">
                                             {{discussion.last_message.sender.id == $page.props.auth.user.id ? "You: ": ""}}{{ discussion.last_message.text }}
@@ -49,34 +51,36 @@
         <div style="position: relative; inset: 0;" class="px-1 flex-grow-1">
             <v-card outlined rounded="xl" style="height:100%;">
                 <v-card-title class="py-2">
-                    {{discussions[selectedDiscussion]? discussions[selectedDiscussion].patient_name: "Messages"}}
+                    {{discussions[selectedDiscussion]? discussions[selectedDiscussion].patient_name: "Messages"}}<v-icon v-if="discussions[selectedDiscussion] && discussions[selectedDiscussion].connected" color="green">mdi-circle-medium</v-icon>
                 </v-card-title>
                 <v-divider></v-divider>
                 <div class="d-flex flex-column" style="height: 100%;" ref="messagesContainer">
                     <div class="flex-fill pt-1 px-5" style="height:100%; overflow-y: auto;" id="scrollContainer" ref="scrollContainer">
                         <v-list reverse class="py-0 mx-2" ref="messagesListGroup" rounded>
-                            <div ref="" class="d-flex flex-column-reverse pr-2">
-                                <v-list-item :class="{'ml-auto': messages[messages.length - index].sender.id == $page.props.auth.user.id}" v-for="index in messages.length" :key="index" :id="`message-${messages.length - index}`" :ref="`message-${messages.length - index}`" v-if="!loadingMessages">
-                                    <v-list-item-avatar v-if="messages[messages.length - index].sender.id != $page.props.auth.user.id">
+                            <div v-if="discussions && discussions[selectedDiscussion]" ref="" class="d-flex flex-column-reverse pr-2">
+                                <v-list-item :class="{'ml-auto': discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id == $page.props.auth.user.id}" v-for="index in discussions[selectedDiscussion].messages.length" :key="index" :id="`message-${discussions[selectedDiscussion].messages.length - index}`" :ref="`message-${discussions[selectedDiscussion].messages.length - index}`" v-if="!loadingMessages">
+                                    <v-list-item-avatar v-if="discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id != $page.props.auth.user.id">
                                         <v-avatar :color="colors[selectedDiscussion % 10]" style="color:white">
                                             {{getFirstLetter(discussions[selectedDiscussion].patient_name)}}
                                         </v-avatar>
                                     </v-list-item-avatar>
                                     <v-list-item-content>
-                                        <v-list-item-title v-if="messages[messages.length - index].sender.id != $page.props.auth.user.id">{{discussions[selectedDiscussion].patient_name}}</v-list-item-title>
+                                        <v-list-item-title v-if="discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id != $page.props.auth.user.id">{{discussions[selectedDiscussion].patient_name}}</v-list-item-title>
                                         <v-list-item-subtitle class="d-flex">
-                                            <v-chip :color="messages[messages.length - index].sender.id == $page.props.auth.user.id? 'red lighten-1': ''" :dark="messages[messages.length - index].sender.id == $page.props.auth.user.id">
+                                            <v-chip :color="discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id == $page.props.auth.user.id? 'red lighten-1': ''" :dark="discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id == $page.props.auth.user.id">
                                                 <div class="" style="max-width:100%;">
-                                                    {{ messages[messages.length - index].text }}
+                                                    {{ discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].text }}
                                                 </div>
-                                                <div :class="{'text-caption': true,'ml-3': true,'mt-3': true,'pr-1': true,'grey--text': true,'text--lighten-4': true,'text--darken-2':messages[messages.length - index].sender.id != $page.props.auth.user.id}">
-                                                    {{ formatMessageBubbleDate(messages[messages.length - index].created_at) }}
+                                                <div :class="{'text-caption': true,'ml-3': true,'mt-3': true,'pr-1': true,'grey--text': true,'text--lighten-4': true,'text--darken-2':discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id != $page.props.auth.user.id}">
+                                                    {{ formatMessageBubbleDate(discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].created_at) }}
                                                 </div>
                                             </v-chip>
                                         </v-list-item-subtitle>
                                     </v-list-item-content>
                                 </v-list-item>
-                                <v-skeleton-loader v-if="loadingMessages" v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
+                            </div>
+                            <div v-if="loadingMessages || !discussions || !discussions" ref="" class="d-flex flex-column-reverse pr-2">
+                            <v-skeleton-loader v-if="loadingMessages" v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
                             </div>
                         </v-list>
                     </div>
@@ -142,6 +146,7 @@ export default {
         connect() {
             // Fired when the socket connects.
             this.isConnected = true;
+
         },
 
         disconnect() {
@@ -149,12 +154,12 @@ export default {
         },
 
         connectionError(error) {
-            console.log(data)
+            console.log(error)
         },
         users(users) {
             users.forEach((user) => {
-                user.self = user.userID === socket.id;
-                initReactiveProperties(user);
+                user.self = user.channelID === this.$socket.id;
+                this.initReactiveProperties(user, true);
             });
             // put the current user first, and then sort by username
             this.users = users.sort((a, b) => {
@@ -164,26 +169,69 @@ export default {
                 return a.username > b.username ? 1 : 0;
             });
         },
+        privateMessage(message) {
+            for (let i = 0; i < this.discussions.length; i++) {
+                const user = this.discussions[i];
+                if (user.channelID === message.from) {
+                    let m = message.content
+                    this.discussions[this.selectedDiscussion].messages.push(m);
+                    this.discussions[this.selectedDiscussion].last_message = m;
+                    // if (user !== this.selectedUser) {
+                    //     user.hasNewMessages = true;
+                    // }
+                    break;
+                }
+            }
+        },
         userConnected(user) {
-            initReactiveProperties(user);
+            this.initReactiveProperties(user, true);
             this.users.push(user);
+        },
+        userDisconnected(user) {
+            this.initReactiveProperties(user, false);
         },
     },
     methods: {
-        pingServer() {
-            // Send the "pingServer" event to the server.
-            this.$socket.emit('pingServer', 'PING!')
+        async initReactiveProperties(user, state) {
+            //search in discussions if user is already there
+            let discussion = this.discussions.find(discussion => discussion.user_id == user.username);
+            if (discussion) {
+                if (state) {
+                    discussion.channelID = user.channelID;
+                }
+                discussion.connected = state;
+            }
         },
         async sendMessage() {
             this.isSendingMessage = true;
             if (this.newMessage.length > 0 && this.newMessage.length <= 255 && this.selectedDiscussion >= 0) {
 
-                socket.emit("privateMessage", {
-                    content: this.newMessage,
-                    to: this.selectedUser.userID,
-                });
+                let m = {
+                    sender: {
+                        id: this.$page.props.auth.user.id,
+                        name: this.$page.props.auth.user.name,
+                    },
+                    receiver: {
+                        id: this.discussions[this.selectedDiscussion].user_id,
+                        name: this.discussions[this.selectedDiscussion].patient_name,
+                    },
+                    text: this.newMessage,
+                    created_at: new Date(),
+                }
 
-                const resp = await axios
+                this.discussions[this.selectedDiscussion].messages.push(m);
+                this.discussions[this.selectedDiscussion].last_message = m;
+                this.isSendingMessage = false;
+                this.onContainerResize();
+
+                if (this.discussions[this.selectedDiscussion].channelID) {
+                    this.$socket.emit("privateMessage", {
+                        content: m,
+                        to: this.discussions[this.selectedDiscussion].channelID
+                    });
+                }
+
+                await axios
                     .post(
                         route("messages.store"), {
                             sender: this.$page.props.auth.user.id,
@@ -195,13 +243,7 @@ export default {
                         this.isSendingMessage = false;
                         console.log(error);
                     });
-                if (resp) {
-                    this.isSendingMessage = false;
-                    this.messages.push(resp.data);
-                    this.newMessage = "";
-                    // this.$refs.sendMessageForm.reset();
-                    this.onContainerResize();
-                }
+                this.newMessage = "";
             }
         },
         async getMessages() {
@@ -307,7 +349,17 @@ export default {
         },
         scrollDown() {
             this.$refs.scrollContainer.scrollTop = this.$refs.scrollContainer.scrollHeight;
-        }
+        },
+        pingServer() {
+            // Send the "pingServer" event to the server.
+            this.$socket.emit('pingServer', 'PING!')
+        },
+        async connectToSocket() {
+            this.$socket.auth = {
+                username: this.$page.props.auth.user.id
+            };
+            await this.$socket.connect();
+        },
     },
     computed: {
         numberOfListSkeletons() {
@@ -320,7 +372,7 @@ export default {
         selectedDiscussion() {
             this.loadingMessages = true;
             this.getMessages().then(resp => {
-                this.messages = resp.data;
+                this.discussions[this.selectedDiscussion].messages = resp.data;
                 this.loadingMessages = false;
             });
         },
@@ -333,10 +385,12 @@ export default {
         const resp = await this.getDiscussions();
         this.discussions = resp.data;
         const resp2 = await this.getMessages();
-        this.messages = resp2.data;
+        this.discussions[this.selectedDiscussion].messages = resp2.data;
+        await this.connectToSocket();
         this.loadingDiscussions = false;
         this.loadingMessages = false;
         this.onContainerResize();
+
     },
     beforeDestroy() {}
 };

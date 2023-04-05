@@ -27,14 +27,14 @@ io.on("connection", async function(socket) {
   console.log("a user connected");
 
   socket.broadcast.emit("userConnected", {
-    userID: socket.id,
+    channelID: socket.id,
     username: socket.username,
   });
 
   const users = [];
   for (let [id, socket] of io.of("/").sockets) {
     users.push({
-      userID: id,
+      channelID: id,
       username: socket.username,
     });
   }
@@ -42,7 +42,19 @@ io.on("connection", async function(socket) {
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
+    socket.broadcast.emit("userDisconnected", {
+      channelID: socket.id,
+      username: socket.username,
+    });
   });
+
+  socket.on("privateMessage", ({ content, to }) => {
+    socket.to(to).emit("privateMessage", {
+      content,
+      from: socket.id,
+    });
+  });
+
 });
 
 server.listen(3000, () => {

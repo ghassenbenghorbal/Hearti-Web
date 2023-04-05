@@ -156,7 +156,11 @@ export default {
         patients_: {
             type: Array,
             default: () => []
-        }
+        },
+        heartRateImage: String,
+        bloodPressureImage: String,
+        temperatureImage: String,
+        overallImage: String,
     },
     data() {
         return {
@@ -183,28 +187,28 @@ export default {
             readings: [{
                     text: "Heart Rate",
                     value: "-",
-                    image: "https://apollohealthlib.blob.core.windows.net/health-library/2021/06/shutterstock_1236631984-scaled.jpg",
+                    image: this.heartRateImage,
                     status: 0,
                     unit: " bpm"
                 },
                 {
                     text: "Blood Pressure",
                     value: "-",
-                    image: "https://img.freepik.com/premium-vector/arterial-blood-pressure-icon-flat-style-heartbeat-monitor-vector-illustration-isolated-background-pulse-diagnosis-sign-business-concept_157943-665.jpg?w=2000",
+                    image: this.bloodPressureImage,
                     status: 0,
                     unit: " mmHg"
                 },
                 {
                     text: "Temperature",
                     value: "-",
-                    image: "https://runningmagazine.ca/wp-content/uploads/2019/08/gettyimages-1002295536-170667a.jpg",
+                    image: this.temperatureImage,
                     status: 0,
                     unit: " °C"
                 },
                 {
                     text: "Overall",
                     value: "-",
-                    image: "https://cdn-icons-png.flaticon.com/512/1869/1869504.png",
+                    image: this.overallImage,
                     status: 0,
                     unit: "-"
                 }

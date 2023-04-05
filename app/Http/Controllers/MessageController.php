@@ -93,6 +93,9 @@ class MessageController extends Controller
                                             ->where('receiver', $id)
                                             ->orderBy('created_at', 'desc')
                                             ->first();
+            $patient->connected = false;
+            $patient->unread = 0;
+            $patient->messages = [];
         }
         return $patients;
     }
