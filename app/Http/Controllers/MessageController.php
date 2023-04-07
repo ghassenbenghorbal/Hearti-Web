@@ -92,6 +92,7 @@ class MessageController extends Controller
                                             ->orWhere('sender', $patient->user_id)
                                             ->where('receiver', $id)
                                             ->orderBy('created_at', 'desc')
+                                            ->with('sender', 'receiver')
                                             ->first();
             $patient->connected = false;
             $patient->unread = 0;

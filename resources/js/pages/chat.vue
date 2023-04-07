@@ -1,20 +1,27 @@
 <template>
 <admin-layout>
-    <!-- <v-snackbar v-model="isConnected" color="green" :timeout="-1" outlined top right>
-        <div>
-            <p>We're connected to the server!</p>
-            <p>Message from server: "{{socketMessage}}"</p>
-        </div>
-        <div class="d-flex justify-content-between">
-            <v-btn text color="primary" @click.native="isConnected = false">Close</v-btn>
-            <v-btn color="green" outlined @click="pingServer()">Ping Server</v-btn>
-        </div>
-    </v-snackbar> -->
     <div style="position: absolute; inset: 0;" class="d-flex pa-3">
         <div style="position: relative; inset: 0;width:30%;" class="px-1 d-flex flex-column">
             <v-card outlined rounded="xl" style="height: 100%;" class="pr-1" ref="chatCard">
-                <v-card-title ref="chatCardTitle" class="py-2">
-                    Chats
+                <v-card-title ref="chatCardTitle" class="py-2 d-flex justify-space-between">
+                    <span>Chats</span>
+                    <v-btn small fab rounded color="primary" dark @click="addDiscussion">
+                        <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                    <v-dialog v-model="addDiscussionDialog" :value="true" max-width="500px" scrollable>
+                        <v-card>
+                            <v-toolbar dense dark color="error" class="text-h6">
+                                Add a new discussion
+                            </v-toolbar>
+                            <v-card-text class="pt-5 pb-0">
+                                <v-autocomplete v-model="newDiscussionPatient" :items="patients" :item-value="null" item-text="name" label="Select a Patient" required filled outlined dense></v-autocomplete>
+                            </v-card-text>
+                            <v-card-actions class="d-flex justify-end">
+                                <v-btn color="red" text dark @click="addDiscussionDialog = false">Close</v-btn>
+                                <v-btn color="primary" text dark @click="createNewDiscussion">Create</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
                 </v-card-title>
                 <v-divider class=""></v-divider>
                 <div v-resize="onContainerResize" ref="discussionsContainer" style="height:100%;overflow-y: auto;">
@@ -30,7 +37,7 @@
                                     <v-list-item-title><span>{{discussion.patient_name}}</span>
                                         <v-icon v-if="discussion.connected" color="green">mdi-circle-medium</v-icon>
                                     </v-list-item-title>
-                                    <v-list-item-subtitle class="d-flex">
+                                    <v-list-item-subtitle class="d-flex" v-if="discussion.last_message">
                                         <div class=" text-truncate" style="max-width:80%;">
                                             {{discussion.last_message.sender.id == $page.props.auth.user.id ? "You: ": ""}}{{ discussion.last_message.text }}
                                         </div>
@@ -51,7 +58,8 @@
         <div style="position: relative; inset: 0;" class="px-1 flex-grow-1">
             <v-card outlined rounded="xl" style="height:100%;">
                 <v-card-title class="py-2">
-                    {{discussions[selectedDiscussion]? discussions[selectedDiscussion].patient_name: "Messages"}}<v-icon v-if="discussions[selectedDiscussion] && discussions[selectedDiscussion].connected" color="green">mdi-circle-medium</v-icon>
+                    {{discussions[selectedDiscussion]? discussions[selectedDiscussion].patient_name: "Messages"}}
+                    <v-icon v-if="discussions[selectedDiscussion] && discussions[selectedDiscussion].connected" color="green">mdi-circle-medium</v-icon>
                 </v-card-title>
                 <v-divider></v-divider>
                 <div class="d-flex flex-column" style="height: 100%;" ref="messagesContainer">
@@ -80,7 +88,7 @@
                                 </v-list-item>
                             </div>
                             <div v-if="loadingMessages || !discussions || !discussions" ref="" class="d-flex flex-column-reverse pr-2">
-                            <v-skeleton-loader v-if="loadingMessages" v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
+                                <v-skeleton-loader v-if="loadingMessages" v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
                             </div>
                         </v-list>
                     </div>
@@ -116,6 +124,9 @@ export default {
     props: {},
     data() {
         return {
+            newDiscussionPatient: null,
+            addDiscussionDialog: false,
+            patients: [],
             users: [],
             isConnected: false,
             socketMessage: '',
@@ -192,6 +203,25 @@ export default {
         },
     },
     methods: {
+        createNewDiscussion() {
+            this.discussions.push({
+                user_id: this.newDiscussionPatient.id,
+                patient_name: this.newDiscussionPatient.name,
+                messages: [],
+                last_message: '',
+                connected: false,
+                channelID: '',
+            })
+            this.addDiscussionDialog = false;
+        },
+        async addDiscussion() {
+            this.addDiscussionDialog = true;
+            await axios.get(route('patient-users')).then(response => {
+                this.patients = response.data;
+            }).catch(error => {
+                console.log(error);
+            });
+        },
         async initReactiveProperties(user, state) {
             //search in discussions if user is already there
             let discussion = this.discussions.find(discussion => discussion.user_id == user.username);

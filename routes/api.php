@@ -34,7 +34,9 @@ Route::prefix('v1')->middleware('auth')->group(function () {
             Route::get('{sender}/{receiver}', [MessageController::class, 'getMessages'])->name('messages');
             Route::post('store', [MessageController::class, 'store'])->name('messages.store');
         });
-        Route::delete('{id}', [MessageController::class, 'destroy'])->name('destroy');
-        
+        Route::delete('{id}', [MessageController::class, 'destroy'])->name('destroy');        
+    });
+    Route::prefix('patient-users')->group(function () {
+        Route::get('/', [PatientController::class, 'getPatientUsers'])->name('patient-users');
     });
 });

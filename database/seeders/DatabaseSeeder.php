@@ -17,10 +17,12 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $users = User::factory(10)->create();
-        Patient::factory(10)->create();
+        // Patient::factory(10)->create();
         foreach($users as $user) {
-            //create 10 message for each user
-            for($i = 0; $i < 10; $i++) {
+                Patient::factory(1)->create([
+                    'name' => $user->name,
+                    'user_id' => $user->id
+                ]);
                 Message::factory(1)->create([
                     'text' => 'Hello, I am ' . $user->name . ' and I am a ' . ($user->is_patient ? 'patient' : 'doctor') . '.',
                     'sender' => $user->id,
@@ -28,8 +30,6 @@ class DatabaseSeeder extends Seeder
                     'receiver' => $users->where('id', '!=', $user->id)->random()->id,
                     'attachement' => 'image'
                 ]);
-            }
-
         }
     }
 }
