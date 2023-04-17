@@ -14,6 +14,9 @@ Vue.use(VueApexCharts);
 
 Vue.component("apexchart", VueApexCharts);
 
+import VueCookies from 'vue-cookies'
+Vue.use(VueCookies)
+
 import socketio from "socket.io-client";
 import VueSocketIO from "vue-socket.io";
 

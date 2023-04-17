@@ -112,7 +112,8 @@ import {
     disable as disableDarkMode,
     auto as followSystemColorScheme,
     exportGeneratedCSS as collectCSS,
-    isEnabled as isDarkReaderEnabled
+    isEnabled as isDarkReaderEnabled,
+    setFetchMethod as setDarkReaderFetchMethod
 } from 'darkreader';
 export default {
     components: {
@@ -177,12 +178,33 @@ export default {
     },
     methods: {
         switchDarkMode() {
-            this.darkMode ? disableDarkMode() : enableDarkMode({
-                                                    brightness: 100,
-                                                    contrast: 90,
-                                                    sepia: 10,
-                                                });
-            this.darkMode = !this.darkMode
+            if (this.darkMode) {
+                this.disableDM();
+            } else {
+                this.enableDM();
+            }
+        },
+        enableDM() {
+            setDarkReaderFetchMethod(window.fetch);
+            enableDarkMode({
+                brightness: 100,
+                contrast: 90,
+                sepia: 10,
+            });
+            this.darkMode = true
+            if (this.$cookies.isKey("darkMode")) {
+                this.$cookies.remove("darkMode")
+            }
+            this.$cookies.set("darkMode", this.darkMode, "1y")
+        },
+        disableDM() {
+            setDarkReaderFetchMethod(window.fetch);
+            disableDarkMode();
+            this.darkMode = false
+            if (this.$cookies.isKey("darkMode")) {
+                this.$cookies.remove("darkMode")
+            }
+            this.$cookies.set("darkMode", this.darkMode, "1y")
         },
         profile() {
             this.$inertia.get('/profile')
@@ -195,6 +217,17 @@ export default {
         },
         trimRouteName(route) {
             return route.split(".")[0]
+        }
+    },
+    created() {
+        if (this.$cookies.isKey("darkMode")) {
+            if (this.$cookies.get("darkMode") == "true") {
+                this.enableDM();
+            } else {
+                this.disableDM();
+            }
+        } else {
+            this.$cookies.set("darkMode", this.darkMode, "1y")
         }
     },
 };
