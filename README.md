@@ -10,6 +10,7 @@
 
 Install Dependecies
 ```bash
+cd express-smart-bracelet
 pip install fastapi
 pip install uvicorn
 pip install pydantic
@@ -58,5 +59,5 @@ php artisan key:generate
 Run Database migrations
 
 ```bash
-php artisan migrate
+php artisan migrate:fresh --seed
 ```
