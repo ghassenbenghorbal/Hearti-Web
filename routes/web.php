@@ -5,6 +5,8 @@ use App\Http\Controllers\HelloController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\MessageController;
+
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -46,6 +48,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('chat', function () {
         return Inertia::render('chat');
     })->name('chat');
+
+    Route::prefix('chat')->group(function() {
+        Route::get('discussions/{id}', [MessageController::class, 'getDiscussions'])->name('discussions');
+        Route::prefix('messages')->group(function () {
+            Route::get('{sender}/{receiver}', [MessageController::class, 'getMessages'])->name('messages');
+            Route::post('store', [MessageController::class, 'store'])->name('messages.store');
+        });
+        Route::delete('{id}', [MessageController::class, 'destroy'])->name('destroy');        
+    });
+
+    Route::prefix('patient-users')->group(function () {
+        Route::get('/', [PatientController::class, 'getPatientUsers'])->name('patient-users');
+    });
 });
 
 

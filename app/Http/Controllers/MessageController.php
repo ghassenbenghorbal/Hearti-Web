@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Message;
+use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
@@ -36,12 +37,18 @@ class MessageController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'text' => 'required|max:320',
             'sender' => 'required|exists:App\Models\User,id|different:receiver',
             'receiver' => 'required|exists:App\Models\User,id|different:sender',
             // 'attachement' => 'file',
         ]);
+
+        //get authenticated user
+        $authed_user = Auth::user();
+
+        \abort_if($request->sender != $authed_user->id && $request->receiver != $authed_user->id, 403, 'Unauthorized action.');
 
         $message = Message::create([
             'text' => $request->text,
@@ -72,8 +79,13 @@ class MessageController extends Controller
 
     public function getDiscussions($id)
     {
+        //get authenticated user
+        $authed_user = Auth::user();
+
         $user = User::findOrFail($id);
         
+        \abort_if($user->id != $authed_user->id, 403, 'Unauthorized action.');
+
         $patients = Message::where('sender', $id)
                             ->orWhere('receiver', $id)
                             ->select(\DB::raw("CASE 
@@ -102,9 +114,13 @@ class MessageController extends Controller
     }
     public function getMessages($sender, $receiver)
     {
+        $authed_user = Auth::user();
+        
         User::findOrFail($sender);
         User::findOrFail($receiver);
 
+        \abort_if($sender != $authed_user->id && $receiver != $authed_user->id, 403, 'Unauthorized action.');
+        
         $messages = Message::where(function ($query) use ($sender, $receiver) {
                                 $query->where('sender', $sender)
                                     ->where('receiver', $receiver);
