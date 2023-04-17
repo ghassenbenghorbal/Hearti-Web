@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Patient;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -67,5 +68,23 @@ class PatientController extends Controller
             'type' => 'success',
             'text' => 'Success delete patient!',
         ]);
+    }
+
+    public function getPatientUsers(){
+        // $id = auth()->user()->id;
+        // $patients = Message::where('sender', $id)
+        //                     ->orWhere('receiver', $id)
+        //                     ->select(\DB::raw("CASE 
+        //                                     WHEN sender = ".$id." THEN receiver 
+        //                                     WHEN receiver = ".$id." THEN sender 
+        //                                     END AS user_id"))
+        //                     ->join('users', function($join) use($id) {
+        //                         $join->on('users.id', '=', \DB::raw("IF(messages.sender = ".$id.", messages.receiver, messages.sender)"));
+        //                     })
+        //                     ->distinct()
+        //                     ->pluck('user_id');
+        // $results = Patient::whereNotIn('user_id', $patients)->get();
+        $results = User::all();
+        return $results;
     }
 }

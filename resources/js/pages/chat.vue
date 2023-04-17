@@ -27,7 +27,7 @@
                 <div v-resize="onContainerResize" ref="discussionsContainer" style="height:100%;overflow-y: auto;">
                     <v-list class="pt-1 pb-0 mx-2 flex-fill" ref="discussionsList" nav rounded>
                         <v-list-item-group ref="discussionsListGroup" v-model="selectedDiscussion" color="error" class="pr-2">
-                            <v-list-item v-for="(discussion, index) in discussions" :key="index" v-if="!loadingDiscussions">
+                            <v-list-item v-for="(discussion, index) in discussions" :key="index" v-if="discussions && discussions[selectedDiscussion]">
                                 <v-list-item-avatar>
                                     <v-avatar :color="colors[index % 10]" style="color:white">
                                         {{ getFirstLetter(discussion.patient_name) }}
@@ -48,7 +48,7 @@
                                     </v-list-item-subtitle>
                                 </v-list-item-content>
                             </v-list-item>
-                            <v-skeleton-loader v-if="loadingDiscussions" v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
+                            <v-skeleton-loader v-if="!discussions || !discussions[selectedDiscussion]" v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
                         </v-list-item-group>
                     </v-list>
                 </div>
@@ -57,7 +57,7 @@
 
         <div style="position: relative; inset: 0;" class="px-1 flex-grow-1">
             <v-card outlined rounded="xl" style="height:100%;">
-                <v-card-title class="py-2">
+                <v-card-title class="py-3">
                     {{discussions[selectedDiscussion]? discussions[selectedDiscussion].patient_name: "Messages"}}
                     <v-icon v-if="discussions[selectedDiscussion] && discussions[selectedDiscussion].connected" color="green">mdi-circle-medium</v-icon>
                 </v-card-title>
@@ -87,15 +87,15 @@
                                     </v-list-item-content>
                                 </v-list-item>
                             </div>
-                            <div v-if="loadingMessages || !discussions || !discussions" ref="" class="d-flex flex-column-reverse pr-2">
+                            <div v-if="!discussions || !discussions[selectedDiscussion] || !discussions[selectedDiscussion].messages" ref="" class="d-flex flex-column-reverse pr-2">
                                 <v-skeleton-loader v-if="loadingMessages" v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
                             </div>
                         </v-list>
                     </div>
 
                     <div ref="sendMessageInput" v-show="discussions[selectedDiscussion]" class="mt-auto d-flex mx-auto py-3" style="width:80%">
-                        <v-form @submit.prevent="sendMessage" ref="sendMessageForm" class="d-flex flex-grow-1">
-                            <v-textarea v-model="newMessage" hide-details placeholder=" " outlined filled rounded dense auto-grow rows="1" max-rows="5" :rules="[v => v.length <= 255 || 'Max 255 characters']"></v-textarea>
+                        <v-form v-if="discussions && discussions[selectedDiscussion]" @submit.prevent="sendMessage" ref="sendMessageForm" class="d-flex flex-grow-1">
+                            <v-textarea v-model="newMessage" @keydown.enter.exact.prevent="sendMessage" hide-details placeholder="" outlined filled rounded dense auto-grow rows="1" max-rows="5" :rules="[v => v.length <= 255 || 'Max 255 characters']"></v-textarea>
                             <v-btn class="mx-3 align-self-end" color="primary" size="20" fab dark small type="submit" :loading="isSendingMessage">
                                 <v-icon>mdi-send</v-icon>
                             </v-btn>
@@ -232,10 +232,24 @@ export default {
                 discussion.connected = state;
             }
         },
-        async sendMessage() {
+        async sendMessageRequest(){
+            const resp = await axios
+                    .post(
+                        route("messages.store"), {
+                            sender: this.$page.props.auth.user.id,
+                            receiver: this.discussions[this.selectedDiscussion].user_id,
+                            text: this.newMessage,
+                        }
+                    )
+                    .catch(error => {
+                        this.isSendingMessage = false;
+                        console.log(error);
+                    });
+        },
+        sendMessage() {
             this.isSendingMessage = true;
             if (this.newMessage.length > 0 && this.newMessage.length <= 255 && this.selectedDiscussion >= 0) {
-
+                
                 let m = {
                     sender: {
                         id: this.$page.props.auth.user.id,
@@ -260,23 +274,13 @@ export default {
                         to: this.discussions[this.selectedDiscussion].channelID
                     });
                 }
-
-                await axios
-                    .post(
-                        route("messages.store"), {
-                            sender: this.$page.props.auth.user.id,
-                            receiver: this.discussions[this.selectedDiscussion].user_id,
-                            text: this.newMessage,
-                        }
-                    )
-                    .catch(error => {
-                        this.isSendingMessage = false;
-                        console.log(error);
-                    });
+                this.sendMessageRequest();
                 this.newMessage = "";
             }
         },
         async getMessages() {
+            if(this.discussions[this.selectedDiscussion]){
+                
             const resp = await axios
                 .get(
                     route("messages", [
@@ -288,6 +292,9 @@ export default {
                     this.loadingMessages = false
                     console.log(error);
                 });
+            return resp;
+            }
+            const resp = {data:[]};
             return resp;
         },
         async getDiscussions() {
@@ -401,7 +408,8 @@ export default {
         selectedDiscussion() {
             this.loadingMessages = true;
             this.getMessages().then(resp => {
-                this.discussions[this.selectedDiscussion].messages = resp.data;
+                if(this.discussions[this.selectedDiscussion])
+                    this.discussions[this.selectedDiscussion].messages = resp.data;
                 this.loadingMessages = false;
             });
         },
@@ -414,7 +422,8 @@ export default {
         const resp = await this.getDiscussions();
         this.discussions = resp.data;
         const resp2 = await this.getMessages();
-        this.discussions[this.selectedDiscussion].messages = resp2.data;
+        if(this.discussions[this.selectedDiscussion])
+            this.discussions[this.selectedDiscussion].messages = resp2.data;
         await this.connectToSocket();
         this.loadingDiscussions = false;
         this.loadingMessages = false;

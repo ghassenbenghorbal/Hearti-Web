@@ -33,21 +33,4 @@ class PatientController extends Controller
             'data' => $results->items(),
         ]);
     }
-    
-    public function getPatientUsers(){
-        $id = auth()->user()->id;
-        $patients = Message::where('sender', $id)
-                            ->orWhere('receiver', $id)
-                            ->select(\DB::raw("CASE 
-                                            WHEN sender = ".$id." THEN receiver 
-                                            WHEN receiver = ".$id." THEN sender 
-                                            END AS user_id"))
-                            ->join('users', function($join) use($id) {
-                                $join->on('users.id', '=', \DB::raw("IF(messages.sender = ".$id.", messages.receiver, messages.sender)"));
-                            })
-                            ->distinct()
-                            ->pluck('user_id');
-        $results = Patient::whereNotIn('user_id', $patients)->get();
-        return $results;
-    }
 }
