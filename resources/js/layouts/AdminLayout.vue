@@ -112,7 +112,8 @@ import {
     disable as disableDarkMode,
     auto as followSystemColorScheme,
     exportGeneratedCSS as collectCSS,
-    isEnabled as isDarkReaderEnabled
+    isEnabled as isDarkReaderEnabled,
+    setFetchMethod as setFetchMethod
 } from 'darkreader';
 export default {
     components: {
@@ -177,11 +178,12 @@ export default {
     },
     methods: {
         switchDarkMode() {
+            // setFetchMethod(window.fetch);
             this.darkMode ? disableDarkMode() : enableDarkMode({
-                                                    brightness: 100,
-                                                    contrast: 90,
-                                                    sepia: 10,
-                                                });
+                brightness: 100,
+                contrast: 90,
+                sepia: 10,
+            });
             this.darkMode = !this.darkMode
         },
         profile() {
