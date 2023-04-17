@@ -48,7 +48,7 @@
                                     </v-list-item-subtitle>
                                 </v-list-item-content>
                             </v-list-item>
-                            <v-skeleton-loader v-if="!discussions || !discussions[selectedDiscussion]" v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
+                            <v-skeleton-loader v-if="!discussions" v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
                         </v-list-item-group>
                     </v-list>
                 </div>
