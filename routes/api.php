@@ -25,9 +25,9 @@ use App\Http\Controllers\Api\Auth\ApiAuthController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 Route::prefix('auth')->group(function () {
     Route::post('login', [ApiAuthController::class, 'login']);
@@ -37,7 +37,7 @@ Route::prefix('auth')->group(function () {
     Route::get('user', [ApiAuthController::class, 'user'])->middleware('auth:sanctum');
 });
 
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('chat')->group(function() {
         Route::get('discussions/{id}', [MessageController::class, 'getDiscussions']);
