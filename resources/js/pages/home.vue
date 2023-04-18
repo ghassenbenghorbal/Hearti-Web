@@ -50,7 +50,7 @@
                             <div class="mx-auto">
                                 <v-sheet elevation="2" rounded color="white">
                                     <v-container fluid class=" pa-0">
-                                        <div class="mx-auto" style=" background-color: white; mix-blend-mode: multiply;">
+                                        <div class="mx-auto" style="">
                                             <v-img class="imgStyle" :contain="true" :aspect-ratio="4/3" :src="item.image"></v-img>
                                         </div>
                                         <div style="background-color: #e3e3e3" class="pb-1">
@@ -96,7 +96,7 @@
                             <div>
                                 <v-sheet elevation="2" rounded color="white">
                                     <v-container fluid class=" pa-0">
-                                        <div class="mx-auto" style=" background-color: white; mix-blend-mode: multiply;">
+                                        <div class="mx-auto" style="">
                                             <v-img class="imgStyle" :contain="true" :aspect-ratio="4/3" :src="item.image"></v-img>
                                         </div>
                                         <div style="background-color: #e3e3e3" class="pb-1">
