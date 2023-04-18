@@ -6,11 +6,11 @@
 - Vuetify + Material Design Icons
 - FastAPI
 
-## FastAPI Installation
+## FastAPI(Used for Prediction) Installation
 
 Install Dependecies
 ```bash
-cd express-smart-bracelet
+cd fastapi
 pip install fastapi
 pip install uvicorn
 pip install pydantic
@@ -22,6 +22,15 @@ Run Server
 ```bash
 cd fastapi
 uvicorn main:app --reload
+```
+
+## Nodejs(Used for Realtime chat) Installation
+
+Install Dependecies
+```bash
+cd express-smart-bracelet
+npm install
+node index.js
 ```
 
 ## Laravel+Vue App Installation
