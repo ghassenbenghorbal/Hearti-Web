@@ -35,17 +35,17 @@
     <v-app-bar color="white" elevation="1" app style="z-index:50">
         <!-- Tablet and below -->
         <v-container fluid class="py-0 fill-height hidden-md-and-up">
-            <v-avatar class="mr-10" color="red lighten-4" size="32">
-                <v-icon color="red">mdi-hospital</v-icon>
-            </v-avatar>
+            <v-btn @click="goToPage('home')" elevation="2" fab class="mr-10" color="red lighten-4" x-small>
+                <v-icon color="red" large>mdi-hospital</v-icon>
+            </v-btn>
             <v-spacer></v-spacer>
             <v-app-bar-nav-icon style="color:red" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         </v-container>
         <!-- Laptop and above -->
         <v-container fluid class="py-0 fill-height hidden-sm-and-down">
-            <v-avatar class="mr-10" color="red lighten-4" size="32">
+            <v-btn @click="goToPage('home')" elevation="2" fab class="mr-10" color="red lighten-4" small>
                 <v-icon large color="red">mdi-hospital</v-icon>
-            </v-avatar>
+            </v-btn>
 
             <v-btn v-for="(item, i) in items" :key="i" @click="goToPage(item.to)" class="mr-1" v-text="item.title" rounded small :text="route().current() == item.to ? false : true" :color="route().current() == item.to ? 'error' : ''" :dark="route().current() == item.to ? true : false" :elevation="route().current() == item.to ? 1 : 0" />
 
