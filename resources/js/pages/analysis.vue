@@ -1,62 +1,66 @@
 <template>
 <admin-layout>
     <div class="d-flex justify-center">
-        <v-card width="40%">
-            <v-toolbar dense dark color="error" class="text-h6">
-                <v-toolbar-title>Heart Disease Analysis</v-toolbar-title>
-            </v-toolbar>
-            <v-card-text class="pb-0">Please fill this form to run the analysis!</v-card-text>
-            <v-form @submit.prevent="submitForm" ref="form">
-                <v-container>
-                    <v-row>
-                        <v-col cols="12" md="6">
-                            <v-text-field :rules="numberRules" v-model="form.age" label="Age" type="number" required filled outlined dense></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-select :rules="numberRules" v-model="form.sex" :items="sexOptions" label="Sex" required filled outlined dense></v-select>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-select :rules="numberRules" v-model="form.chestPain" :items="chestPainOptions" label="Chest Pain Type" required filled outlined dense></v-select>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-text-field :rules="numberRules" v-model="form.bloodPressure" label="Resting Blood Pressure" type="number" required filled outlined dense></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-text-field :rules="numberRules" v-model="form.cholestoral" label="Serum Cholestoral (mg/dl)" type="number" required filled outlined dense></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-select :rules="numberRules" v-model="form.fastingBloodSugar" :items="fastingBloodSugarOptions" label="Fasting Blood Sugar > 120 mg/dl" required filled outlined dense></v-select>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-select :rules="numberRules" v-model="form.restingEcg" :items="restingEcgOptions" label="Resting Electrocardiographic Results" required filled outlined dense></v-select>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-text-field :rules="numberRules" v-model="form.maxHeartRate" label="Maximum Heart Rate Achieved" type="number" required filled outlined dense></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-select :rules="numberRules" v-model="form.exerciseAngina" :items="exerciseAnginaOptions" label="Exercise Induced Angina" required filled outlined dense></v-select>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-text-field :rules="numberRules" v-model="form.oldpeak" label="ST Depression Induced by Exercise Relative to Rest" type="number" required filled outlined dense></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-select :rules="numberRules" v-model="form.slope" :items="slopeOptions" label="Slope of the Peak Exercise ST Segment" required filled outlined dense></v-select>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-select :rules="numberRules" v-model="form.numVessels" :items="numVesselsOptions" label="Number of Major Vessels Colored by Fluoroscopy" required filled outlined dense></v-select>
-                        </v-col>
-                        <v-col cols="12">
-                            <v-select :rules="numberRules" v-model="form.thal" :items="thalOptions" label="Thal" required filled outlined dense></v-select>
-                        </v-col>
-                    </v-row>
-                    <v-card-actions class="d-flex justify-end">
-                        <v-btn type="submit" color="primary" dark :loading="analysing">
-                            <v-icon>mdi-magnify</v-icon>Analyse
-                        </v-btn>
-                    </v-card-actions>
-                </v-container>
-            </v-form>
-        </v-card>
+        <v-row class="d-flex justify-center">
+            <v-col cols="10" sm="10" md="4" lg="4" xl="4">
+                <v-card>
+                    <v-toolbar dense dark color="error" class="text-h6">
+                        <v-toolbar-title>Heart Disease Analysis</v-toolbar-title>
+                    </v-toolbar>
+                    <v-card-text class="pb-0">Please fill this form to run the analysis!</v-card-text>
+                    <v-form @submit.prevent="submitForm" ref="form">
+                        <v-container>
+                            <v-row>
+                                <v-col cols="12" md="6">
+                                    <v-text-field :rules="numberRules" v-model="form.age" label="Age" type="number" required filled outlined dense></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-select :rules="numberRules" v-model="form.sex" :items="sexOptions" label="Sex" required filled outlined dense></v-select>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-select :rules="numberRules" v-model="form.chestPain" :items="chestPainOptions" label="Chest Pain Type" required filled outlined dense></v-select>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-text-field :rules="numberRules" v-model="form.bloodPressure" label="Resting Blood Pressure" type="number" required filled outlined dense></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-text-field :rules="numberRules" v-model="form.cholestoral" label="Serum Cholestoral (mg/dl)" type="number" required filled outlined dense></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-select :rules="numberRules" v-model="form.fastingBloodSugar" :items="fastingBloodSugarOptions" label="Fasting Blood Sugar > 120 mg/dl" required filled outlined dense></v-select>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-select :rules="numberRules" v-model="form.restingEcg" :items="restingEcgOptions" label="Resting Electrocardiographic Results" required filled outlined dense></v-select>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-text-field :rules="numberRules" v-model="form.maxHeartRate" label="Maximum Heart Rate Achieved" type="number" required filled outlined dense></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-select :rules="numberRules" v-model="form.exerciseAngina" :items="exerciseAnginaOptions" label="Exercise Induced Angina" required filled outlined dense></v-select>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-text-field :rules="numberRules" v-model="form.oldpeak" label="ST Depression Induced by Exercise Relative to Rest" type="number" required filled outlined dense></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-select :rules="numberRules" v-model="form.slope" :items="slopeOptions" label="Slope of the Peak Exercise ST Segment" required filled outlined dense></v-select>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-select :rules="numberRules" v-model="form.numVessels" :items="numVesselsOptions" label="Number of Major Vessels Colored by Fluoroscopy" required filled outlined dense></v-select>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-select :rules="numberRules" v-model="form.thal" :items="thalOptions" label="Thal" required filled outlined dense></v-select>
+                                </v-col>
+                            </v-row>
+                            <v-card-actions class="d-flex justify-end">
+                                <v-btn type="submit" color="primary" dark :loading="analysing">
+                                    <v-icon>mdi-magnify</v-icon>Analyse
+                                </v-btn>
+                            </v-card-actions>
+                        </v-container>
+                    </v-form>
+                </v-card>
+            </v-col>
+        </v-row>
     </div>
     <v-dialog v-model="resultDialog" :value="true" max-width="500px" scrollable>
         <v-card>
