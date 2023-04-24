@@ -22,7 +22,7 @@ import VueSocketIO from "vue-socket.io";
 
 export const SocketInstance = socketio("http://localhost:3000",{
   transports: ['websocket'],
-  autoConnect: false,
+  autoConnect: true,
   debug: true,
   auth: {
     token: 'abc'

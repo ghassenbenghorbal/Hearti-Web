@@ -1,5 +1,5 @@
 <template>
-  <v-app style="background-color: #f5f5f5 !important;">
+  <v-app style="background-color: #f5f5f5;">
     <v-main>
       <v-container fluid>
         <slot />

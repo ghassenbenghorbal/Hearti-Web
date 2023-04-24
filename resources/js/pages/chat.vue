@@ -1,8 +1,8 @@
 <template>
 <admin-layout>
     <div style="position: absolute; inset: 0;" class="d-flex pa-3">
-        <div style="position: relative; inset: 0;width:30%;" class="px-1 d-flex flex-column">
-            <v-card outlined rounded="xl" style="height: 100%;" class="pr-1" ref="chatCard">
+        <div :style="{position: 'relative', inset: 0, width: setDiscussionsCardWidth()}" :class="{'px-1': !$vuetify.breakpoint.xsOnly}">
+            <v-card v-show="showDiscussionsCard" outlined rounded="xl" style="height: 100%;" class="pr-1" ref="chatCard">
                 <v-card-title ref="chatCardTitle" class="py-2 d-flex justify-space-between">
                     <span>Chats</span>
                     <v-btn small fab rounded color="primary" dark @click="addDiscussion">
@@ -26,8 +26,8 @@
                 <v-divider class=""></v-divider>
                 <div v-resize="onContainerResize" ref="discussionsContainer" style="height:100%;overflow-y: auto;">
                     <v-list class="pt-1 pb-0 mx-2 flex-fill" ref="discussionsList" nav rounded>
-                        <v-list-item-group ref="discussionsListGroup" v-model="selectedDiscussion" color="error" class="pr-2">
-                            <v-list-item v-for="(discussion, index) in discussions" :key="index" v-if="discussions && discussions[selectedDiscussion]">
+                        <v-list-item-group ref="discussionsListGroup" v-model="selectedDiscussion" color="error" class="pr-2" mandatory>
+                            <v-list-item v-for="(discussion, index) in discussions" :key="index" v-if="discussions && discussions[selectedDiscussion]" @click="showChatsMobile($vuetify.breakpoint.xsOnly)">
                                 <v-list-item-avatar>
                                     <v-avatar :color="colors[index % 10]" style="color:white">
                                         {{ getFirstLetter(discussion.patient_name) }}
@@ -48,24 +48,27 @@
                                     </v-list-item-subtitle>
                                 </v-list-item-content>
                             </v-list-item>
-                            <v-skeleton-loader v-if="!discussions" v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
+                            <div v-if="!discussions || !discussions[selectedDiscussion] || !discussions[selectedDiscussion].messages" ref="" class="d-flex flex-column-reverse pr-2">
+                            <v-skeleton-loader v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
+                            </div>
                         </v-list-item-group>
                     </v-list>
                 </div>
             </v-card>
         </div>
 
-        <div style="position: relative; inset: 0;" class="px-1 flex-grow-1">
-            <v-card outlined rounded="xl" style="height:100%;">
-                <v-card-title class="py-3">
-                    {{discussions[selectedDiscussion]? discussions[selectedDiscussion].patient_name: "Messages"}}
+        <div :style="{position: 'relative', inset: 0, width: setChatsCardWidth()}" :class="{'px-1': !$vuetify.breakpoint.xsOnly}">
+            <v-card v-show="showChatsCard" outlined rounded="xl" style="height:100%;">
+                <v-card-title :class="{'py-2': $vuetify.breakpoint.xsOnly, 'py-3': !$vuetify.breakpoint.xsOnly}">
+                    <v-btn class="mr-2" elevation="2" fab small v-if="$vuetify.breakpoint.xsOnly" @click="hideChatsCard()"><v-icon>mdi-arrow-left</v-icon></v-btn>
+                    <div>{{discussions[selectedDiscussion]? discussions[selectedDiscussion].patient_name: "Messages"}}</div>
                     <v-icon v-if="discussions[selectedDiscussion] && discussions[selectedDiscussion].connected" color="green">mdi-circle-medium</v-icon>
                 </v-card-title>
                 <v-divider></v-divider>
                 <div class="d-flex flex-column" style="height: 100%;" ref="messagesContainer">
-                    <div class="flex-fill pt-1 px-5" style="height:100%; overflow-y: auto;" id="scrollContainer" ref="scrollContainer">
+                    <div class="flex-fill pt-1 px-lg-5 px-xl-5 px-md-5 px-0" style="height:100%; overflow-y: auto;" id="scrollContainer" ref="scrollContainer">
                         <v-list reverse class="py-0 mx-2" ref="messagesListGroup" rounded>
-                            <div v-if="discussions && discussions[selectedDiscussion]" ref="" class="d-flex flex-column-reverse pr-2">
+                            <div v-if="discussions && discussions[selectedDiscussion]" ref="" class="d-flex flex-column-reverse">
                                 <v-list-item :class="{'ml-auto': discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id == $page.props.auth.user.id}" v-for="index in discussions[selectedDiscussion].messages.length" :key="index" :id="`message-${discussions[selectedDiscussion].messages.length - index}`" :ref="`message-${discussions[selectedDiscussion].messages.length - index}`" v-if="!loadingMessages">
                                     <v-list-item-avatar v-if="discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id != $page.props.auth.user.id">
                                         <v-avatar :color="colors[selectedDiscussion % 10]" style="color:white">
@@ -87,8 +90,8 @@
                                     </v-list-item-content>
                                 </v-list-item>
                             </div>
-                            <div v-if="!discussions || !discussions[selectedDiscussion] || !discussions[selectedDiscussion].messages" ref="" class="d-flex flex-column-reverse pr-2">
-                                <v-skeleton-loader v-if="loadingMessages" v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
+                            <div v-if="!discussions || !discussions[selectedDiscussion] || discussions[selectedDiscussion].messages.length < 1" ref="" class="d-flex flex-column-reverse pr-2">
+                                <v-skeleton-loader  v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
                             </div>
                         </v-list>
                     </div>
@@ -124,6 +127,9 @@ export default {
     props: {},
     data() {
         return {
+            showDiscussionsCard: true,
+            showChatsCard: !this.$vuetify.breakpoint.xsOnly,
+
             newDiscussionPatient: null,
             addDiscussionDialog: false,
             patients: [],
@@ -181,9 +187,11 @@ export default {
             });
         },
         privateMessage(message) {
+            let found = false;
             for (let i = 0; i < this.discussions.length; i++) {
                 const user = this.discussions[i];
                 if (user.channelID === message.from) {
+                    found = true;
                     let m = message.content
                     this.discussions[this.selectedDiscussion].messages.push(m);
                     this.discussions[this.selectedDiscussion].last_message = m;
@@ -192,6 +200,18 @@ export default {
                     // }
                     break;
                 }
+            }
+            console.log("hello")
+            if(!found) {
+                console.log("found")
+                this.discussions.push({
+                    user_id: message.sender.id,
+                    patient_name: message.sender.name,
+                    messages: [m],
+                    last_message: m,
+                    connected: true,
+                    channelID: message.from,
+                })
             }
         },
         userConnected(user) {
@@ -203,6 +223,48 @@ export default {
         },
     },
     methods: {
+        setDiscussionsCardWidth(){
+            if(this.showDiscussionsCard && this.showChatsCard)
+            {
+                return "30%"
+            }
+            else if(this.showDiscussionsCard && !this.showChatsCard)
+            {
+                return "100%"
+            }
+            else if(!this.showDiscussionsCard && this.showChatsCard)
+            {
+                return "0%"
+            }
+        },
+        setChatsCardWidth(){
+            if(this.showDiscussionsCard && this.showChatsCard)
+            {
+                return "70%"
+            }
+            else if(this.showDiscussionsCard && !this.showChatsCard)
+            {
+                return "0%"
+            }
+            else if(!this.showDiscussionsCard && this.showChatsCard)
+            {
+                return "100%"
+            }
+        },
+        showChatsMobile(){
+            if(this.$vuetify.breakpoint.xsOnly){
+                this.showDiscussionsCard = false;
+                this.showChatsCard = true;
+                this.onContainerResize()
+            }
+        },
+        hideChatsCard(){
+            if(this.$vuetify.breakpoint.xsOnly){
+                this.showDiscussionsCard = true;
+                this.showChatsCard = false;
+                this.onContainerResize()
+            }
+        },
         createNewDiscussion() {
             this.discussions.push({
                 user_id: this.newDiscussionPatient.id,
@@ -402,9 +464,21 @@ export default {
             let screenHeight = window.innerHeight.toString();
             let numberOfListSkeletons = parseInt(screenHeight[0]);
             return numberOfListSkeletons;
-        }
+        },
     },
     watch: {
+        '$vuetify.breakpoint.xsOnly'(val) {
+            if(val)
+            {
+                this.showDiscussionsCard = true;
+                this.showChatsCard = false;
+            }
+            else
+            {
+                this.showDiscussionsCard = true;
+                this.showChatsCard = true;
+            }
+        },
         selectedDiscussion() {
             this.loadingMessages = true;
             this.getMessages().then(resp => {
