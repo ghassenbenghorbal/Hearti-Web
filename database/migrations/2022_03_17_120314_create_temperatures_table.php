@@ -18,6 +18,7 @@ class CreateTemperaturesTable extends Migration
             $table->unsignedBigInteger('patient_id');
             $table->foreign('patient_id')->references('id')->on('patients');
             $table->float('temperature', 3, 1);
+            $table->timestamp('time')->useCurrent();
             $table->timestamps();
         });
     }

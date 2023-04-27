@@ -11,14 +11,25 @@ const io = new Server(server, {
   }
 });
 
-const getHourFormatted = () => {
-  var date = new Date();
-  var seconds = date.getSeconds();
-  var minutes = date.getMinutes();
-  var hours = date.getHours();
-  let now = hours + ":" + minutes + ":" + seconds;
-  return now;
+// const getHourFormatted = () => {
+//   const now = new Date();
+//   const hours = now.getHours().toString().padStart(2, '0');
+//   const minutes = now.getMinutes().toString().padStart(2, '0');
+//   const seconds = now.getSeconds().toString().padStart(2, '0');
+//   const time = `${hours}:${minutes}:${seconds}`;
+//   return time;
 
+// }
+const getHourFormatted = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const day = now.getDate().toString().padStart(2, '0');
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const seconds = now.getSeconds().toString().padStart(2, '0');
+  const datetime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  return datetime;
 }
 
 const authenticate = (socket, validBraceletID) => {

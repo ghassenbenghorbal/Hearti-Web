@@ -10,7 +10,8 @@ class BloodPressure extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'patient_id',
         'blood_pressure',
+        'time',
     ];
 }

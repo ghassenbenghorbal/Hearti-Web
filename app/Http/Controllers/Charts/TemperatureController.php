@@ -6,25 +6,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Temperature;
 use App\Http\Resources\TemperatureResource;
+use App\Models\Patient;
 
 class TemperatureController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
+    public function index($id)
     {
-        $block_id = null;
-        if($request->has("block_id"))
-            $block_id = $request->block_id;
-        else
-            $block_id = 1;
-        $temperature = Temperature::select('temp','created_at')->where("block_id","=",$block_id)->whereDate('created_at','=',$request->date)->orderBy('created_at')->get();
-        return TemperatureResource::collection($temperature);
+        $patient = Patient::findOrFail($id);
+        $temperatures = Temperature::selectRaw('time as x, patient_id, temperature as y')->where('patient_id',$id)->get();
+        return $temperatures;
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -34,16 +25,18 @@ class TemperatureController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedRequest = $request->validate([
-            'block_id' => 'required|max:8',
-            'temp' => 'required|digits_between:1,3',
+        $data = $this->validate($request,[
+            'temperatures' => 'required|array',
+            'temperatures.*.time' => 'required|date_format:Y-m-d H:i:s',
+            'temperatures.*.temperature' => 'required|numeric',
+            'temperatures.*.patient_id' => 'required|exists:patients,id',
         ]);
-        $temperature = Temperature::create([
-            "block_id" => $request->block_id,
-            "temp" => $request->temp
+        foreach($data['temperatures'] as $temperature){
+            Temperature::create($temperature);
+        }
+        return \response()->json([
+            'status' => 'success',
         ]);
-        $temperature->save();
-        return $temperature;
 
     }
 
