@@ -3,7 +3,7 @@
     <div style="height:100%" class="d-flex flex-column">
 
         <div class="mb-4 d-flex align-center justify-center flex-wrap" v-if="$vuetify.breakpoint.lgAndUp">
-            <div style="width:250px;" class="mr-5 white">
+            <div style="" class="mr-5 white">
                 <div class="d-inline-flex">
                     <v-autocomplete v-model="patient" @input="changePatient" :items="patients" item-text="name" :item-value="null" label="Patient" dense outlined hide-details></v-autocomplete>
                 </div>
@@ -573,7 +573,7 @@ export default {
     mounted() {
         this.connectToBracelet();
         this.setPatientOverview();
-        
+
         this.dataSocket.on("connect", () => {
             console.log("connected");
         });
