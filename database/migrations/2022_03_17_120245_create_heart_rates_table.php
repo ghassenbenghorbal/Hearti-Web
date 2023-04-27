@@ -18,6 +18,7 @@ class CreateHeartRatesTable extends Migration
             $table->unsignedBigInteger('patient_id');
             $table->foreign('patient_id')->references('id')->on('patients');
             $table->integer('heart_rate');
+            $table->timestamp('time')->useCurrent();
             $table->timestamps();
         });
     }

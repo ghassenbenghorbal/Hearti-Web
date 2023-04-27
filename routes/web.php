@@ -6,6 +6,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\Charts\HeartRateController;
+use App\Http\Controllers\Charts\BloodPressureController;
+use App\Http\Controllers\Charts\TemperatureController;
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,7 +29,24 @@ Route::get('/', function () {
 })->middleware('guest')->name('/');
 
 Route::middleware(['auth'])->group(function () {
+
     Route::get('home', [HomeController::class, 'index'])->name('home');
+
+    Route::prefix('heart-rate')->group(function(){
+        Route::get('/{id}', [HeartRateController::class, 'index'])->name('heart-rate.index');
+        Route::post('store', [HeartRateController::class, 'store'])->name('heart-rate.store');
+    });
+
+    Route::prefix('blood-pressure')->group(function(){
+        Route::get('/{id}', [BloodPressureController::class, 'index'])->name('blood-pressure.index');
+        Route::post('store', [BloodPressureController::class, 'store'])->name('blood-pressure.store');
+    });
+
+    Route::prefix('temperature')->group(function(){
+        Route::get('/{id}', [TemperatureController::class, 'index'])->name('temperature.index');
+        Route::post('store', [TemperatureController::class, 'store'])->name('temperature.store');
+    });
+
     Route::prefix('profile')->group(function(){
         Route::get('/', [UserController::class, 'index'])->name('profile');
         Route::put('change-password', [UserController::class, 'changePassword']);
@@ -45,11 +65,11 @@ Route::middleware(['auth'])->group(function () {
         return Inertia::render('analysis');
     })->name('analysis');
     
-    Route::get('chat', function () {
-        return Inertia::render('chat');
-    })->name('chat');
 
     Route::prefix('chat')->group(function() {
+        Route::get('/', function () {
+            return Inertia::render('chat');
+        })->name('chat');
         Route::get('discussions/{id}', [MessageController::class, 'getDiscussions'])->name('discussions');
         Route::prefix('messages')->group(function () {
             Route::get('{sender}/{receiver}', [MessageController::class, 'getMessages'])->name('messages');

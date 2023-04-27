@@ -3,8 +3,11 @@
     <div style="height:100%" class="d-flex flex-column">
 
         <div class="mb-4 d-flex align-center justify-center flex-wrap" v-if="$vuetify.breakpoint.lgAndUp">
-            <div style="" class="mr-5 white">
-                <div class="d-inline-flex">
+            <div style="" class="mr-5 d-flex">
+                <div>
+                    <v-select class="mr-2" style="width:150px" label="Mode" v-model="mode" :items="modes" outlined dense hide-details></v-select>
+                </div>
+                <div>
                     <v-autocomplete v-model="patient" @input="changePatient" :items="patients" item-text="name" :item-value="null" label="Patient" dense outlined hide-details></v-autocomplete>
                 </div>
             </div>
@@ -30,8 +33,11 @@
                     </v-chip>
                 </div>
             </div>
-            <div style="width:250px;" class="mt-3 mr-5 white">
-                <div class="d-inline-flex">
+            <div class="mt-3 mr-5 d-flex">
+                <div>
+                    <v-select class="mr-2" style="width:150px" label="Mode" v-model="mode" :items="modes" outlined dense hide-details></v-select>
+                </div>
+                <div>
                     <v-autocomplete v-model="patient" @input="changePatient" :items="patients" item-text="name" :item-value="null" label="Patient" dense outlined hide-details></v-autocomplete>
                 </div>
             </div>
@@ -166,13 +172,18 @@ export default {
     },
     data() {
         return {
+            modes: ["Realtime", "All"],
+            mode: "Realtime",
             dateMenu: false,
             heartRate: 0,
             heartRateArray: [],
+            heartRateToSave: [],
             bloodPressure: 0,
             bloodPressureArray: [],
+            bloodPressureToSave: [],
             temperature: 0,
             temperatureArray: [],
+            temperatureToSave: [],
             dangerSteps: [{
                     text: "stable",
                     color: "success"
@@ -298,7 +309,7 @@ export default {
                             curve: "smooth"
                         },
                         markers: {
-                            size: 1
+                            size: 0
                         },
                         title: {
                             text: "Heart Rate"
@@ -310,10 +321,11 @@ export default {
                             position: "top"
                         },
                         xaxis: {
-                            tickAmount: 5,
+                            type: 'datetime',
+                            // tickAmount: 5,
                             labels: {
                                 rotate: 0,
-                                hideOverlappingLabels: true
+                                hideOverlappingLabels: true,
                             }
                         },
                         yaxis: {
@@ -343,7 +355,7 @@ export default {
                             curve: "smooth"
                         },
                         markers: {
-                            size: 1
+                            size: 0
                         },
                         title: {
                             text: "Blood Pressure"
@@ -362,10 +374,11 @@ export default {
                             forceNiceScale: true
                         },
                         xaxis: {
-                            tickAmount: 5,
+                            type: 'datetime',
+                            // tickAmount: 5,
                             labels: {
                                 rotate: 0,
-                                hideOverlappingLabels: true
+                                hideOverlappingLabels: true,
                             }
                         },
                         noData: {
@@ -387,7 +400,7 @@ export default {
                             curve: "smooth"
                         },
                         markers: {
-                            size: 1
+                            size: 0
                         },
                         title: {
                             text: "Temperature"
@@ -398,10 +411,11 @@ export default {
                         },
                         colors: ["#FF9800"],
                         xaxis: {
-                            tickAmount: 5,
+                            type: 'datetime',
+                            // tickAmount: 5,
                             labels: {
                                 rotate: 0,
-                                hideOverlappingLabels: true
+                                hideOverlappingLabels: true,
                             }
                         },
                         yaxis: {
@@ -440,24 +454,41 @@ export default {
         };
     },
     methods: {
-        getHourFormatted() {
-            var date = new Date();
-            var seconds = date.getSeconds();
-            var minutes = date.getMinutes();
-            var hours = date.getHours();
-            let now = hours + ":" + minutes + ":" + seconds;
-            return now;
+        // getHourFormatted() {
+        //     var date = new Date();
+        //     var seconds = date.getSeconds();
+        //     var minutes = date.getMinutes();
+        //     var hours = date.getHours();
+        //     let now = hours + ":" + minutes + ":" + seconds;
+        //     return now;
+        // },
+        async saveHeartRate(heartRates) {
+            await axios.post(route("heart-rate.store"), heartRates).then((response) => {
+            }).catch((error) => {
+                console.log(error);
+            })
         },
         setHeartRate(heartRate) {
             // random number from 80 to 90
             this.heartRateArray;
             this.readings[0].value = heartRate.y;
             this.readings[0].status = Number(heartRate.y > 88);
-
             this.heartRateArray.push(heartRate);
 
             if (this.heartRateArray.length > 10) {
-                this.heartRateArray.shift();
+                const hr = this.heartRateArray.shift();
+                let heartRate = {
+                    patient_id: this.patient.id,
+                    heart_rate: hr.y,
+                    time: hr.x
+                }
+                this.heartRateToSave.push(heartRate);
+            }
+            if (this.heartRateToSave.length == 10) {
+                this.saveHeartRate({
+                    heart_rates: this.heartRateToSave
+                });
+                this.heartRateToSave = [];
             }
             this.$refs.heartRate[0].updateSeries(
                 [{
@@ -467,7 +498,12 @@ export default {
                 true
             );
         },
-
+        async saveBloodPressure(bloodPressures) {
+            await axios.post(route("blood-pressure.store"), bloodPressures).then((response) => {
+            }).catch((error) => {
+                console.log(error);
+            })
+        },
         setBloodPressure(bloodPressure) {
             // random number from 100 to 120
             this.bloodPressureArray;
@@ -477,7 +513,19 @@ export default {
             this.bloodPressureArray.push(bloodPressure);
 
             if (this.bloodPressureArray.length > 10) {
-                this.bloodPressureArray.shift();
+                const bp = this.bloodPressureArray.shift();
+                let bloodPressure = {
+                    patient_id: this.patient.id,
+                    blood_pressure: bp.y,
+                    time: bp.x
+                }
+                this.bloodPressureToSave.push(bloodPressure);
+            }
+            if (this.bloodPressureToSave.length == 10) {
+                this.saveBloodPressure({
+                    blood_pressures: this.bloodPressureToSave
+                });
+                this.bloodPressureToSave = [];
             }
             this.$refs.bloodPressure[0].updateSeries(
                 [{
@@ -487,7 +535,12 @@ export default {
                 true
             );
         },
-
+        async saveTemperature(temperatures) {
+            await axios.post(route("temperature.store"), temperatures).then((response) => {
+            }).catch((error) => {
+                console.log(error);
+            })
+        },
         setTemperature(temperature) {
             // random number from 90 to 100
             this.temperatureArray;
@@ -495,7 +548,19 @@ export default {
             this.readings[2].status = Number(temperature.y > 37);
             this.temperatureArray.push(temperature);
             if (this.temperatureArray.length > 10) {
-                this.temperatureArray.shift();
+                const temp = this.temperatureArray.shift();
+                let temperature = {
+                    patient_id: this.patient.id,
+                    temperature: temp.y,
+                    time: temp.x
+                }
+                this.temperatureToSave.push(temperature);
+            }
+            if (this.temperatureToSave.length == 10) {
+                this.saveTemperature({
+                    temperatures: this.temperatureToSave
+                });
+                this.temperatureToSave = [];
             }
             this.$refs.temperature[0].updateSeries(
                 [{
@@ -504,6 +569,14 @@ export default {
                 false,
                 true
             );
+        },
+        addDateToTime(time) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const date = `${year}-${month}-${day}`;
+            return date + " " + time;
         },
         changePatient() {
             this.$refs.bloodPressure[0].updateSeries(
@@ -527,6 +600,10 @@ export default {
                 false,
                 true
             );
+            this.dataSocket.disconnect(true)
+            this.connectToBracelet()
+            this.setPatientOverview()
+
         },
         async connectToBracelet() {
             try {
@@ -545,7 +622,49 @@ export default {
             this.overviews[1].value = this.patient.age;
             this.overviews[2].value = this.patient.address;
             this.overviews[3].value = this.patient.relative_contact;
-        }
+        },
+        async fetchBloodPressure() {
+            await axios.get(route("blood-pressure.index", this.patient.id)).then((response) => {
+                this.bloodPressureArray = response.data;
+                this.$refs.bloodPressure[0].updateSeries(
+                    [{
+                        data: this.bloodPressureArray
+                    }],
+                    false,
+                    true
+                );
+            }).catch((error) => {
+                console.log(error);
+            })
+        },
+        async fetchTemperature() {
+            await axios.get(route("temperature.index", this.patient.id)).then((response) => {
+                this.temperatureArray = response.data;
+                this.$refs.temperature[0].updateSeries(
+                    [{
+                        data: this.temperatureArray
+                    }],
+                    false,
+                    true
+                );
+            }).catch((error) => {
+                console.log(error);
+            })
+        },
+        async fetchHeartRate() {
+            await axios.get(route("heart-rate.index", this.patient.id)).then((response) => {
+                this.heartRateArray = response.data;
+                this.$refs.heartRate[0].updateSeries(
+                    [{
+                        data: this.heartRateArray
+                    }],
+                    false,
+                    true
+                );
+            }).catch((error) => {
+                console.log(error);
+            })
+        },
     },
     computed: {
         chartsP1: function () {
@@ -565,10 +684,33 @@ export default {
         }
     },
     watch: {
-        patient: function () {
-            this.dataSocket.disconnect(true)
-            this.connectToBracelet()
-            this.setPatientOverview()
+        mode: function (val) {
+            this.$refs.bloodPressure[0].updateSeries(
+                [{
+                    data: []
+                }],
+                false,
+                true
+            );
+            this.$refs.temperature[0].updateSeries(
+                [{
+                    data: []
+                }],
+                false,
+                true
+            );
+            this.$refs.heartRate[0].updateSeries(
+                [{
+                    data: []
+                }],
+                false,
+                true
+            );
+            if (val == "All") {
+                this.fetchBloodPressure();
+                this.fetchTemperature();
+                this.fetchHeartRate();
+            }
         }
     },
     mounted() {
@@ -583,10 +725,18 @@ export default {
             console.log("disconnected");
         });
 
+        this.dataSocket.on('connection_error', (data) => {
+            // Fired when couldn’t establish a connection with the server.
+            console.log("connection_error")
+            this.dataSocket.disconnect(true)
+        })
+
         this.dataSocket.on("realtimeData", (data) => {
-            this.setHeartRate(data.heartRate);
-            this.setBloodPressure(data.bloodPressure);
-            this.setTemperature(data.temperature);
+            if (this.mode == "Realtime") {
+                this.setHeartRate(data.heartRate);
+                this.setBloodPressure(data.bloodPressure);
+                this.setTemperature(data.temperature);
+            }
         })
     },
     beforeDestroy() {
