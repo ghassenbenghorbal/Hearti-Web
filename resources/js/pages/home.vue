@@ -5,7 +5,7 @@
         <div class="mb-4 d-flex align-center justify-center flex-wrap" v-if="$vuetify.breakpoint.lgAndUp">
             <div style="width:250px;" class="mr-5 white">
                 <div class="d-inline-flex">
-                    <v-select v-model="block" @input="changePatient" :items="patients" item-text="name" item-value="id" label="Patient" dense outlined hide-details></v-select>
+                    <v-autocomplete v-model="patient" @input="changePatient" :items="patients" item-text="name" :item-value="null" label="Patient" dense outlined hide-details></v-autocomplete>
                 </div>
             </div>
             <div class="d-flex flex-wrap justify-center">
@@ -14,7 +14,7 @@
                         <v-icon right>
                             {{ overview.icon }}
                         </v-icon>
-                        <b class="ml-3">{{ overview.text }}</b> : {{ patient[index] }}
+                        <b class="ml-3">{{ overview.text }}</b> : {{ overview.value }}
                     </v-chip>
                 </div>
             </div>
@@ -22,17 +22,17 @@
         <div class="mb-4 d-flex align-center justify-center flex-wrap" v-if="$vuetify.breakpoint.mdAndDown">
             <div class="d-flex flex-wrap justify-center">
                 <div v-for="(overview, index) in overviews" :key="index" class="mx-1 mb-1">
-                    <v-chip :color="overview.color" pill class="elevation-2 text-wrap py-5">
+                    <v-chip :color="overview.color" pill class="elevation-2 text-wrap py-3">
                         <v-icon right>
                             {{ overview.icon }}
                         </v-icon>
-                        <b class="ml-3">{{ overview.text }}</b> : {{ patient[index] }}
+                        <b class="ml-3">{{ overview.text }}</b> : {{ overview.value }}
                     </v-chip>
                 </div>
             </div>
             <div style="width:250px;" class="mt-3 mr-5 white">
                 <div class="d-inline-flex">
-                    <v-select v-model="block" @input="changePatient" :items="patients" item-text="name" item-value="id" label="Patient" dense outlined hide-details></v-select>
+                    <v-autocomplete v-model="patient" @input="changePatient" :items="patients" item-text="name" :item-value="null" label="Patient" dense outlined hide-details></v-autocomplete>
                 </div>
             </div>
         </div>
@@ -141,6 +141,8 @@
 
 <script>
 import AdminLayout from "../layouts/AdminLayout.vue";
+import socketio from "socket.io-client";
+
 export default {
     components: {
         AdminLayout
@@ -213,58 +215,36 @@ export default {
                     unit: "-"
                 }
             ],
-            overviews: [{
-                    text: "Name",
-                    value: null,
-                    loading: false,
-                    color: "primary"
-                },
-                {
-                    text: "Age",
-                    value: null,
-                    loading: false,
-                    color: "success"
-                },
-                {
-                    text: "Address",
-                    value: null,
-                    loading: false,
-                    color: "warning"
-                },
-                {
-                    text: "Relative",
-                    value: null,
-                    loading: false,
-                    color: "error"
-                }
-            ],
-
             date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
                 .toISOString()
                 .substr(0, 10),
             patients: this.patients_,
-            patient: [],
-            block: 1,
+            patient: this.patients_[0],
+            block: 0,
             overviews: [{
                     text: "Name",
+                    value: "",
                     icon: "mdi-account",
                     loading: false,
                     color: "primary"
                 },
                 {
                     text: "Age",
+                    value: "",
                     icon: "mdi-calendar",
                     loading: false,
                     color: "secondary"
                 },
                 {
                     text: "Address",
+                    value: "",
                     icon: "mdi-map-marker",
                     loading: false,
                     color: "info"
                 },
                 {
                     text: "Relative Contact",
+                    value: "",
                     icon: "mdi-phone",
                     loading: false,
                     color: "error"
@@ -437,7 +417,7 @@ export default {
                             text: "Loading..."
                         }
                     },
-                    series: []
+                    series: [],
                 }
             ],
             breadcrumbs: [{
@@ -451,7 +431,12 @@ export default {
                     href: "/home"
                 }
             ],
-            timer: null
+            timer: null,
+            dataSocket: socketio("http://localhost:3001", {
+                transports: ['websocket'],
+                autoConnect: false,
+                debug: true,
+            }),
         };
     },
     methods: {
@@ -463,19 +448,14 @@ export default {
             let now = hours + ":" + minutes + ":" + seconds;
             return now;
         },
-        setHeartRate() {
+        setHeartRate(heartRate) {
             // random number from 80 to 90
-            let x = Math.floor(Math.random() * (91 - 80)) + 80;
-            x = Math.round(x);
             this.heartRateArray;
-            this.readings[0].value = x;
-            this.readings[0].status = Number(x > 88);
+            this.readings[0].value = heartRate.y;
+            this.readings[0].status = Number(heartRate.y > 88);
 
-            let now = getHourFormatted()
-            this.heartRateArray.push({
-                x: now,
-                y: x
-            });
+            this.heartRateArray.push(heartRate);
+
             if (this.heartRateArray.length > 10) {
                 this.heartRateArray.shift();
             }
@@ -488,19 +468,14 @@ export default {
             );
         },
 
-        setBloodPressure() {
+        setBloodPressure(bloodPressure) {
             // random number from 100 to 120
-            let x = Math.floor(Math.random() * (121 - 100)) + 100;
-            x = Math.round(x);
             this.bloodPressureArray;
-            this.readings[1].value = x;
-            this.readings[1].status = Number(x > 118);
+            this.readings[1].value = bloodPressure.y;
+            this.readings[1].status = Number(bloodPressure.y > 118);
 
-            let now = getHourFormatted()
-            this.bloodPressureArray.push({
-                x: now,
-                y: x
-            });
+            this.bloodPressureArray.push(bloodPressure);
+
             if (this.bloodPressureArray.length > 10) {
                 this.bloodPressureArray.shift();
             }
@@ -513,19 +488,12 @@ export default {
             );
         },
 
-        setTemperature() {
+        setTemperature(temperature) {
             // random number from 90 to 100
-            let x = Math.floor(Math.random() * (41 - 36)) + 36;
-            x = Math.round(x);
             this.temperatureArray;
-            this.readings[2].value = x;
-            this.readings[2].status = Number(x > 37);
-
-            let now = getHourFormatted()
-            this.temperatureArray.push({
-                x: now,
-                y: x
-            });
+            this.readings[2].value = temperature.y;
+            this.readings[2].status = Number(temperature.y > 37);
+            this.temperatureArray.push(temperature);
             if (this.temperatureArray.length > 10) {
                 this.temperatureArray.shift();
             }
@@ -559,6 +527,24 @@ export default {
                 false,
                 true
             );
+        },
+        async connectToBracelet() {
+            try {
+                this.dataSocket.auth = {
+                    braceletId: this.patient.secret_phrase,
+                    username: this.$page.props.auth.user.email
+                };
+                this.dataSocket.io.uri = this.patient.bracelet_url;
+                await this.dataSocket.connect();
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        setPatientOverview() {
+            this.overviews[0].value = this.patient.name;
+            this.overviews[1].value = this.patient.age;
+            this.overviews[2].value = this.patient.address;
+            this.overviews[3].value = this.patient.relative_contact;
         }
     },
     computed: {
@@ -579,25 +565,28 @@ export default {
         }
     },
     watch: {
-        block: function () {
-            let p = this.patients[this.block - 1];
-            this.patient[0] = p.name;
-            this.patient[1] = p.age;
-            this.patient[2] = p.address;
-            this.patient[3] = p.relative_contact;
+        patient: function () {
+            this.connectToBracelet()
+            this.setPatientOverview()
         }
     },
     mounted() {
-        this.timer = setInterval(() => {
-            this.setHeartRate();
-            this.setBloodPressure();
-            this.setTemperature();
-        }, 1600);
-        let p = this.patients[0];
-        this.patient.push(p.name);
-        this.patient.push(p.age);
-        this.patient.push(p.address);
-        this.patient.push(p.relative_contact);
+        this.connectToBracelet();
+        this.setPatientOverview();
+        
+        this.dataSocket.on("connect", () => {
+            console.log("connected");
+        });
+
+        this.dataSocket.on("disconnect", () => {
+            console.log("disconnected");
+        });
+
+        this.dataSocket.on("realtimeData", (data) => {
+            this.setHeartRate(data.heartRate);
+            this.setBloodPressure(data.bloodPressure);
+            this.setTemperature(data.temperature);
+        })
     },
     beforeDestroy() {
         clearInterval(this.timer);

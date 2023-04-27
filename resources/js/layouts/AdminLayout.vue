@@ -20,13 +20,24 @@
             </v-list-item-group>
         </v-list>
         <v-list>
+            
+            <!-- v-btn to switch between light and dork mode -->
             <v-list-item>
-                <v-list-item-title class="text-center">
-                    <v-btn small rounded dark color="red lighten-1" @click="logout()">
+                <div style="width:100%">
+                    <v-btn small rounded block :dark="darkMode" color="" @click="switchDarkMode()">
+                        {{darkMode ? "Light Mode" : "Dark Mode"}}
+                        <v-icon style="padding-bottom:1px" right>{{darkMode ? "mdi-weather-sunny" : "mdi-weather-night"}}</v-icon>
+                    </v-btn>
+                </div>
+            </v-list-item>
+            
+            <v-list-item>
+                <div style="width:100%">
+                    <v-btn small rounded dark block color="red lighten-1" @click="logout()">
                         Log Out
                         <v-icon style="padding-bottom:1px" right>mdi-logout</v-icon>
                     </v-btn>
-                </v-list-item-title>
+                </div>
             </v-list-item>
         </v-list>
 
@@ -50,13 +61,6 @@
             <v-btn v-for="(item, i) in items" :key="i" @click="goToPage(item.to)" class="mr-1" v-text="item.title" rounded small :text="route().current() == item.to ? false : true" :color="route().current() == item.to ? 'error' : ''" :dark="route().current() == item.to ? true : false" :elevation="route().current() == item.to ? 1 : 0" />
 
             <v-spacer></v-spacer>
-            <div>
-                <v-badge class="mr-8" :content="3" :value="3" overlap dark>
-                    <v-icon class="notification-bell" color="red lighten-1">
-                        mdi-bell
-                    </v-icon>
-                </v-badge>
-            </div>
             <v-menu offset-y rounded="lg" transition="scale-transition" origin="center center" style="z-index:1000">
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn class="ml-4" small rounded dark color="red lighten-1" v-bind="attrs" v-on="on">
