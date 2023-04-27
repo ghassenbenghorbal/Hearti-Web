@@ -108,8 +108,10 @@ class MessageController extends Controller
                                             ->first();
             $patient->connected = false;
             $patient->unread = 0;
+            // $patient->messages = $this->getMessages($id, $patient->user_id);
             $patient->messages = [];
         }
+        $patients[0]->messages = $this->getMessages($id, $patients[0]->user_id);
         return $patients;
     }
     public function getMessages($sender, $receiver)

@@ -48,7 +48,7 @@
                                     </v-list-item-subtitle>
                                 </v-list-item-content>
                             </v-list-item>
-                            <div v-if="!discussions || !discussions[selectedDiscussion] || !discussions[selectedDiscussion].messages" ref="" class="d-flex flex-column-reverse pr-2">
+                            <div v-if="loadingDiscussions" ref="" class="d-flex flex-column-reverse pr-2">
                             <v-skeleton-loader v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
                             </div>
                         </v-list-item-group>
@@ -68,7 +68,7 @@
                 <div class="d-flex flex-column" style="height: 100%;" ref="messagesContainer">
                     <div class="flex-fill pt-1 px-lg-5 px-xl-5 px-md-5 px-0" style="height:100%; overflow-y: auto;" id="scrollContainer" ref="scrollContainer">
                         <v-list reverse class="py-0 mx-2" ref="messagesListGroup" rounded>
-                            <div v-if="discussions && discussions[selectedDiscussion]" ref="" class="d-flex flex-column-reverse">
+                            <div v-if="discussions && discussions[selectedDiscussion] && !loadingMessages" ref="" class="d-flex flex-column-reverse">
                                 <v-list-item :class="{'ml-auto': discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id == $page.props.auth.user.id}" v-for="index in discussions[selectedDiscussion].messages.length" :key="index" :id="`message-${discussions[selectedDiscussion].messages.length - index}`" :ref="`message-${discussions[selectedDiscussion].messages.length - index}`" v-if="!loadingMessages">
                                     <v-list-item-avatar v-if="discussions[selectedDiscussion].messages[discussions[selectedDiscussion].messages.length - index].sender.id != $page.props.auth.user.id">
                                         <v-avatar :color="colors[selectedDiscussion % 10]" style="color:white">
@@ -90,7 +90,7 @@
                                     </v-list-item-content>
                                 </v-list-item>
                             </div>
-                            <div v-if="!discussions || !discussions[selectedDiscussion] || discussions[selectedDiscussion].messages.length < 1" ref="" class="d-flex flex-column-reverse pr-2">
+                            <div v-if="loadingMessages" ref="" class="d-flex flex-column-reverse pr-2">
                                 <v-skeleton-loader  v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
                             </div>
                         </v-list>
@@ -151,8 +151,8 @@ export default {
                 "grey"
             ],
             selectedDiscussion: 0,
-            loadingDiscussions: true,
-            loadingMessages: true,
+            loadingDiscussions: false,
+            loadingMessages: false,
             discussions: [],
             messages: [],
             newMessage: "",
@@ -342,31 +342,39 @@ export default {
         },
         async getMessages() {
             if(this.discussions[this.selectedDiscussion]){
-                
-            const resp = await axios
-                .get(
-                    route("messages", [
-                        this.$page.props.auth.user.id,
-                        this.discussions[this.selectedDiscussion].user_id
-                    ])
-                )
-                .catch(error => {
-                    this.loadingMessages = false
-                    console.log(error);
-                });
-            return resp;
+                this.loadingMessages = true;
+                await axios
+                    .get(
+                        route("messages", [
+                            this.$page.props.auth.user.id,
+                            this.discussions[this.selectedDiscussion].user_id
+                        ])
+                    )
+                    .then(resp => {
+                        this.discussions[this.selectedDiscussion].messages = resp.data;
+                        this.loadingMessages = false;
+                    })
+                    .catch(error => {
+                        this.loadingMessages = false
+                        console.log(error);
+                    });
             }
-            const resp = {data:[]};
-            return resp;
         },
         async getDiscussions() {
-            const resp = await axios
+            this.loadingDiscussions = true;
+            this.loadingMessages = true;
+            await axios
                 .get(route("discussions", this.$page.props.auth.user.id))
+                .then(response => {
+                    this.discussions = response.data;
+                    this.loadingDiscussions = false;
+                    this.loadingMessages = false;
+                })
                 .catch(error => {
                     console.log(error);
                     this.loadingDiscussions = false;
+                    this.loadingMessages = false;
                 });
-            return resp;
         },
         getFirstLetter(name) {
             let nameSplit = name.split(" ");
@@ -480,27 +488,16 @@ export default {
             }
         },
         selectedDiscussion() {
-            this.loadingMessages = true;
-            this.getMessages().then(resp => {
-                if(this.discussions[this.selectedDiscussion])
-                    this.discussions[this.selectedDiscussion].messages = resp.data;
-                this.loadingMessages = false;
-            });
+            this.getMessages()
         },
     },
     created() {},
     updated() {
         this.scrollDown();
     },
-    async mounted() {
-        const resp = await this.getDiscussions();
-        this.discussions = resp.data;
-        const resp2 = await this.getMessages();
-        if(this.discussions[this.selectedDiscussion])
-            this.discussions[this.selectedDiscussion].messages = resp2.data;
-        await this.connectToSocket();
-        this.loadingDiscussions = false;
-        this.loadingMessages = false;
+    mounted() {
+        this.getDiscussions();
+        this.connectToSocket();
         this.onContainerResize();
 
     },
