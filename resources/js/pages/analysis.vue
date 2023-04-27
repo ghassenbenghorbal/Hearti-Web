@@ -2,7 +2,7 @@
 <admin-layout>
     <div class="d-flex justify-center">
         <v-row class="d-flex justify-center">
-            <v-col cols="10" sm="10" md="4" lg="4" xl="4">
+            <v-col cols="10" sm="10" md="5" lg="5" xl="5">
                 <v-card>
                     <v-toolbar dense dark color="error" class="text-h6">
                         <v-toolbar-title>Heart Disease Analysis</v-toolbar-title>

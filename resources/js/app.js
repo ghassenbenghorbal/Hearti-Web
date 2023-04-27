@@ -20,7 +20,7 @@ Vue.use(VueCookies)
 import socketio from "socket.io-client";
 import VueSocketIO from "vue-socket.io";
 
-export const SocketInstance = socketio("http://192.168.1.23:3000",{
+export const SocketInstance = socketio("http://localhost:3000",{
   transports: ['websocket'],
   autoConnect: false,
   debug: true,
