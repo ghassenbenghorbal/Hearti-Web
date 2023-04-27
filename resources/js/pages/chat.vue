@@ -98,7 +98,7 @@
 
                     <div ref="sendMessageInput" v-show="discussions[selectedDiscussion]" class="mt-auto d-flex mx-auto py-3" style="width:80%">
                         <v-form v-if="discussions && discussions[selectedDiscussion]" @submit.prevent="sendMessage" ref="sendMessageForm" class="d-flex flex-grow-1">
-                            <v-textarea v-model="newMessage" @keydown.enter.exact.prevent="sendMessage" hide-details placeholder="" outlined filled rounded dense auto-grow rows="1" max-rows="5" :rules="[v => v.length <= 255 || 'Max 255 characters']"></v-textarea>
+                            <v-textarea v-model="newMessage" @keydown.enter.exact.prevent="sendMessage" hide-details placeholder="Type something..." outlined filled rounded dense auto-grow rows="1" max-rows="5" :rules="[v => v.length <= 255 || 'Max 255 characters']"></v-textarea>
                             <v-btn class="mx-3 align-self-end" color="primary" size="20" fab dark small type="submit" :loading="isSendingMessage">
                                 <v-icon>mdi-send</v-icon>
                             </v-btn>

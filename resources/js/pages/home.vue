@@ -566,6 +566,7 @@ export default {
     },
     watch: {
         patient: function () {
+            this.dataSocket.disconnect(true)
             this.connectToBracelet()
             this.setPatientOverview()
         }
