@@ -455,6 +455,14 @@ export default {
         };
     },
     methods: {
+        getHourFormatted() {
+            var date = new Date();
+            var seconds = date.getSeconds();
+            var minutes = date.getMinutes();
+            var hours = date.getHours();
+            let now = hours + ":" + minutes + ":" + seconds;
+            return now;
+        },
         setHeartRate() {
             // random number from 80 to 90
             let x = Math.floor(Math.random() * (91 - 80)) + 80;
@@ -463,11 +471,7 @@ export default {
             this.readings[0].value = x;
             this.readings[0].status = Number(x > 88);
 
-            var date = new Date();
-            var seconds = date.getSeconds();
-            var minutes = date.getMinutes();
-            var hours = date.getHours();
-            let now = hours + ":" + minutes + ":" + seconds;
+            let now = getHourFormatted()
             this.heartRateArray.push({
                 x: now,
                 y: x
@@ -492,11 +496,7 @@ export default {
             this.readings[1].value = x;
             this.readings[1].status = Number(x > 118);
 
-            var date = new Date();
-            var seconds = date.getSeconds();
-            var minutes = date.getMinutes();
-            var hours = date.getHours();
-            let now = hours + ":" + minutes + ":" + seconds;
+            let now = getHourFormatted()
             this.bloodPressureArray.push({
                 x: now,
                 y: x
@@ -521,11 +521,7 @@ export default {
             this.readings[2].value = x;
             this.readings[2].status = Number(x > 37);
 
-            var date = new Date();
-            var seconds = date.getSeconds();
-            var minutes = date.getMinutes();
-            var hours = date.getHours();
-            let now = hours + ":" + minutes + ":" + seconds;
+            let now = getHourFormatted()
             this.temperatureArray.push({
                 x: now,
                 y: x

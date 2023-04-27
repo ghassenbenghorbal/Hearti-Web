@@ -35,6 +35,8 @@ class PatientController extends Controller
             'relative_contact' => 'required',
             'age' => 'required',
             'address' => 'required|string',
+            'user_id' => 'exists:users,id',
+            'bracelet_url' => 'required',
         ]);
         Patient::create($data);
         return redirect()->back()->with('message', [
@@ -43,15 +45,18 @@ class PatientController extends Controller
         ]);
     }
 
-    public function update(Patient $patient, Request $request)
+    public function update($id, Request $request)
     {
+        $patient = Patient::findOrFail($id);
         $data = $this->validate($request, [
             'secret_phrase' => 'required',
             'name' => 'required',
             'relative_name' => 'required',
             'relative_contact' => 'required',
             'age' => 'required',
-            'address' => 'required|string'
+            'address' => 'required|string',
+            'user_id' => 'exists:users,id',
+            'bracelet_url' => 'required',
         ]);
         $patient->update($data);
         return redirect()->back()->with('message', [
@@ -60,10 +65,10 @@ class PatientController extends Controller
         ]);
     }
 
-    public function destroy(Patient $patient)
-    {
+    public function destroy($id)
+    {   
+        $patient = Patient::findOrFail($id);
         $patient->delete();
-        Block::where('id', $patient->id)->delete();
         return redirect()->back()->with('message', [
             'type' => 'success',
             'text' => 'Success delete patient!',
