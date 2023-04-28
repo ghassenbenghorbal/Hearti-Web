@@ -463,8 +463,7 @@ export default {
         //     return now;
         // },
         async saveHeartRate(heartRates) {
-            await axios.post(route("heart-rate.store"), heartRates).then((response) => {
-            }).catch((error) => {
+            await axios.post(route("heart-rate.store"), heartRates).then((response) => {}).catch((error) => {
                 console.log(error);
             })
         },
@@ -499,8 +498,7 @@ export default {
             );
         },
         async saveBloodPressure(bloodPressures) {
-            await axios.post(route("blood-pressure.store"), bloodPressures).then((response) => {
-            }).catch((error) => {
+            await axios.post(route("blood-pressure.store"), bloodPressures).then((response) => {}).catch((error) => {
                 console.log(error);
             })
         },
@@ -536,8 +534,7 @@ export default {
             );
         },
         async saveTemperature(temperatures) {
-            await axios.post(route("temperature.store"), temperatures).then((response) => {
-            }).catch((error) => {
+            await axios.post(route("temperature.store"), temperatures).then((response) => {}).catch((error) => {
                 console.log(error);
             })
         },
@@ -665,6 +662,49 @@ export default {
                 console.log(error);
             })
         },
+        async saveHeartRateInBackground(hr) {
+            let heartRate = {
+                patient_id: this.patient.id,
+                heart_rate: hr.y,
+                time: hr.x
+            }
+            this.heartRateToSave.push(heartRate);
+
+            if (this.heartRateToSave.length == 10) {
+                await this.saveHeartRate({
+                    heart_rates: this.heartRateToSave
+                });
+                this.heartRateToSave = [];
+            }
+        },
+        async saveBloodPressureInBackground(bp) {
+            let bloodPressure = {
+                patient_id: this.patient.id,
+                blood_pressure: bp.y,
+                time: bp.x
+            }
+            this.bloodPressureToSave.push(bloodPressure);
+            if (this.bloodPressureToSave.length == 10) {
+                await this.saveBloodPressure({
+                    blood_pressures: this.bloodPressureToSave
+                });
+                this.bloodPressureToSave = [];
+            }
+        },
+        async saveTemperatureInBackground(temp) {
+            let temperature = {
+                patient_id: this.patient.id,
+                temperature: temp.y,
+                time: temp.x
+            }
+            this.temperatureToSave.push(temperature);
+            if (this.temperatureToSave.length == 10) {
+                await this.saveTemperature({
+                    temperatures: this.temperatureToSave
+                });
+                this.temperatureToSave = [];
+            }
+        },
     },
     computed: {
         chartsP1: function () {
@@ -685,6 +725,9 @@ export default {
     },
     watch: {
         mode: function (val) {
+            this.heartRateArray = [];
+            this.bloodPressureArray = [];
+            this.temperatureArray = [];
             this.$refs.bloodPressure[0].updateSeries(
                 [{
                     data: []
@@ -705,7 +748,7 @@ export default {
                 }],
                 false,
                 true
-            );
+            )
             if (val == "All") {
                 this.fetchBloodPressure();
                 this.fetchTemperature();
@@ -736,11 +779,16 @@ export default {
                 this.setHeartRate(data.heartRate);
                 this.setBloodPressure(data.bloodPressure);
                 this.setTemperature(data.temperature);
+            } else if (this.mode == "All") {
+                this.saveBloodPressureInBackground(data.bloodPressure);
+                this.saveTemperatureInBackground(data.temperature);
+                this.saveHeartRateInBackground(data.heartRate);
             }
         })
     },
     beforeDestroy() {
         clearInterval(this.timer);
+        this.dataSocket.disconnect(true);
     }
 };
 </script>
