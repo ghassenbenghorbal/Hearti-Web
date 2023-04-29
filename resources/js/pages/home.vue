@@ -25,11 +25,11 @@
         <div class="mb-4 d-flex align-center justify-center flex-wrap" v-if="$vuetify.breakpoint.mdAndDown">
             <div class="d-flex flex-wrap justify-center">
                 <div v-for="(overview, index) in overviews" :key="index" class="mx-1 mb-1">
-                    <v-chip :color="overview.color" pill class="elevation-2 text-wrap py-3">
+                    <v-chip :color="overview.color" pill class="elevation-2 text-wrap py-lg-3 py-md-3 py-sm-3 py-3">
                         <v-icon right>
                             {{ overview.icon }}
                         </v-icon>
-                        <b class="ml-3">{{ overview.text }}</b> : {{ overview.value }}
+                        <b class="ml-3">{{ overview.text }}</b> : <span>{{ overview.value }}</span>
                     </v-chip>
                 </div>
             </div>
@@ -54,12 +54,12 @@
                     <v-row class="px-7">
                         <v-col cols="6" md="3" lg="3" xl="3" style="height:100%" v-for="(item, index) in readings" :key="index">
                             <div class="mx-auto">
-                                <v-sheet elevation="2" rounded color="white">
+                                <v-sheet elevation="2" color="white" class="rounded-xl">
                                     <v-container fluid class=" pa-0">
                                         <div class="mx-auto" style="">
-                                            <v-img class="imgStyle" :contain="true" :aspect-ratio="4/3" :src="item.image"></v-img>
+                                            <v-img class="imgStyle rounded-t-xl" :contain="true" :aspect-ratio="4/3" :src="item.image"></v-img>
                                         </div>
-                                        <div style="background-color: #e3e3e3" class="pb-1">
+                                        <div style="background-color: #e3e3e3" class="pb-1 rounded-b-xl">
                                             <div style="color:black" class="text-caption pt-1 text-center">
                                                 <b>{{ item.text }}</b>
                                             </div>
@@ -100,12 +100,12 @@
                     <v-row class="px-10">
                         <v-col cols="6" md="3" lg="3" xl="3" style="height:100%" v-for="(item, index) in readings" :key="index">
                             <div>
-                                <v-sheet elevation="2" rounded color="white">
+                                <v-sheet elevation="2" rounded color="white" class="rounded-xl">
                                     <v-container fluid class=" pa-0">
                                         <div class="mx-auto" style="">
-                                            <v-img class="imgStyle" :contain="true" :aspect-ratio="4/3" :src="item.image"></v-img>
+                                            <v-img class="imgStyle rounded-t-xl" :contain="true" :aspect-ratio="4/3" :src="item.image"></v-img>
                                         </div>
-                                        <div style="background-color: #e3e3e3" class="pb-1">
+                                        <div style="background-color: #e3e3e3" class="pb-1 rounded-b-xl">
                                             <div style="color:black" class="text-caption pt-1 text-center">
                                                 <b>{{ item.text }}</b>
                                             </div>
@@ -130,7 +130,7 @@
                     </v-row>
                 </v-col>
                 <v-col md="6" cols="12" v-for="chart in chartsP1" :key="chart.id" style="">
-                    <v-card class="" width="100%" height="100%">
+                    <v-card class="" width="100%">
                         <apexchart :ref="chart.id" width="100%" type="line" :options="chart.chartOptions" :series="chart.series"></apexchart>
                     </v-card>
                 </v-col>
@@ -172,6 +172,7 @@ export default {
     },
     data() {
         return {
+            token: "",
             modes: ["Realtime", "All"],
             mode: "Realtime",
             dateMenu: false,
@@ -454,14 +455,6 @@ export default {
         };
     },
     methods: {
-        // getHourFormatted() {
-        //     var date = new Date();
-        //     var seconds = date.getSeconds();
-        //     var minutes = date.getMinutes();
-        //     var hours = date.getHours();
-        //     let now = hours + ":" + minutes + ":" + seconds;
-        //     return now;
-        // },
         async saveHeartRate(heartRates) {
             await axios.post(route("heart-rate.store"), heartRates).then((response) => {}).catch((error) => {
                 console.log(error);
@@ -476,19 +469,19 @@ export default {
 
             if (this.heartRateArray.length > 10) {
                 const hr = this.heartRateArray.shift();
-                let heartRate = {
-                    patient_id: this.patient.id,
-                    heart_rate: hr.y,
-                    time: hr.x
-                }
-                this.heartRateToSave.push(heartRate);
+                // let heartRate = {
+                //     patient_id: this.patient.id,
+                //     heart_rate: hr.y,
+                //     time: hr.x
+                // }
+                // this.heartRateToSave.push(heartRate);
             }
-            if (this.heartRateToSave.length == 10) {
-                this.saveHeartRate({
-                    heart_rates: this.heartRateToSave
-                });
-                this.heartRateToSave = [];
-            }
+            // if (this.heartRateToSave.length == 10) {
+            //     this.saveHeartRate({
+            //         heart_rates: this.heartRateToSave
+            //     });
+            //     this.heartRateToSave = [];
+            // }
             this.$refs.heartRate[0].updateSeries(
                 [{
                     data: [...new Set(this.heartRateArray)]
@@ -512,19 +505,19 @@ export default {
 
             if (this.bloodPressureArray.length > 10) {
                 const bp = this.bloodPressureArray.shift();
-                let bloodPressure = {
-                    patient_id: this.patient.id,
-                    blood_pressure: bp.y,
-                    time: bp.x
-                }
-                this.bloodPressureToSave.push(bloodPressure);
+                // let bloodPressure = {
+                //     patient_id: this.patient.id,
+                //     blood_pressure: bp.y,
+                //     time: bp.x
+                // }
+                // this.bloodPressureToSave.push(bloodPressure);
             }
-            if (this.bloodPressureToSave.length == 10) {
-                this.saveBloodPressure({
-                    blood_pressures: this.bloodPressureToSave
-                });
-                this.bloodPressureToSave = [];
-            }
+            // if (this.bloodPressureToSave.length == 10) {
+            //     this.saveBloodPressure({
+            //         blood_pressures: this.bloodPressureToSave
+            //     });
+            //     this.bloodPressureToSave = [];
+            // }
             this.$refs.bloodPressure[0].updateSeries(
                 [{
                     data: this.bloodPressureArray
@@ -546,19 +539,19 @@ export default {
             this.temperatureArray.push(temperature);
             if (this.temperatureArray.length > 10) {
                 const temp = this.temperatureArray.shift();
-                let temperature = {
-                    patient_id: this.patient.id,
-                    temperature: temp.y,
-                    time: temp.x
-                }
-                this.temperatureToSave.push(temperature);
+                // let temperature = {
+                //     patient_id: this.patient.id,
+                //     temperature: temp.y,
+                //     time: temp.x
+                // }
+                // this.temperatureToSave.push(temperature);
             }
-            if (this.temperatureToSave.length == 10) {
-                this.saveTemperature({
-                    temperatures: this.temperatureToSave
-                });
-                this.temperatureToSave = [];
-            }
+            // if (this.temperatureToSave.length == 10) {
+            //     this.saveTemperature({
+            //         temperatures: this.temperatureToSave
+            //     });
+            //     this.temperatureToSave = [];
+            // }
             this.$refs.temperature[0].updateSeries(
                 [{
                     data: this.temperatureArray
@@ -566,14 +559,6 @@ export default {
                 false,
                 true
             );
-        },
-        addDateToTime(time) {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            const day = now.getDate().toString().padStart(2, '0');
-            const date = `${year}-${month}-${day}`;
-            return date + " " + time;
         },
         changePatient() {
             this.$refs.bloodPressure[0].updateSeries(
@@ -604,12 +589,27 @@ export default {
         },
         async connectToBracelet() {
             try {
-                this.dataSocket.auth = {
+                if(!this.token)
+                await axios.post(route('create-token')).then(async (resp) => {
+                    this.dataSocket.auth = {
+                    id: this.patient.id,
                     braceletId: this.patient.secret_phrase,
-                    username: this.$page.props.auth.user.email
-                };
-                this.dataSocket.io.uri = this.patient.bracelet_url;
-                await this.dataSocket.connect();
+                    username: this.$page.props.auth.user.email,
+                    token: resp.data.token
+                    };
+                    this.dataSocket.io.uri = this.patient.bracelet_url;
+                    await this.dataSocket.connect();
+                })
+                else{
+                    this.dataSocket.auth = {
+                    id: this.patient.id,
+                    braceletId: this.patient.secret_phrase,
+                    username: this.$page.props.auth.user.email,
+                    token: resp.data.token
+                    };
+                    this.dataSocket.io.uri = this.patient.bracelet_url;
+                    await this.dataSocket.connect();
+                }
             } catch (e) {
                 console.log(e);
             }
@@ -779,11 +779,12 @@ export default {
                 this.setHeartRate(data.heartRate);
                 this.setBloodPressure(data.bloodPressure);
                 this.setTemperature(data.temperature);
-            } else if (this.mode == "All") {
-                this.saveBloodPressureInBackground(data.bloodPressure);
-                this.saveTemperatureInBackground(data.temperature);
-                this.saveHeartRateInBackground(data.heartRate);
-            }
+            } 
+            // else if (this.mode == "All") {
+            //     this.saveBloodPressureInBackground(data.bloodPressure);
+            //     this.saveTemperatureInBackground(data.temperature);
+            //     this.saveHeartRateInBackground(data.heartRate);
+            // }
         })
     },
     beforeDestroy() {

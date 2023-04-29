@@ -63,10 +63,18 @@ class ApiAuthController extends Controller
 
     public function refresh(Request $request)
     {
+        \abort_if(!Auth::user(), 401, 'You are not logged in!');
         $newToken = Auth::user()->tokens()->create(['name' => 'new-token'])->plainTextToken;
         Auth::user()->tokens()->where('id', $request->user()->currentAccessToken()->id)->delete();
 
         return response()->json(['token' => $newToken]);
+    }
+
+    public function createToken(Request $request)
+    {
+        $token = $request->user()->createToken('api-token')->plainTextToken;
+
+        return response()->json(['token' => $token]);
     }
 
     public function user(Request $request)

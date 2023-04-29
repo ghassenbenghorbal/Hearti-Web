@@ -6,11 +6,12 @@ use App\Http\Controllers\Charts\Co2Controller;
 use App\Http\Controllers\Charts\HumidityController;
 use App\Http\Controllers\Charts\TemperatureController;
 use App\Http\Controllers\Charts\MovementController;
+use App\Http\Controllers\Charts\HeartRateController;
+use App\Http\Controllers\Charts\BloodPressureController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\HospitalController;
 
 use App\Http\Controllers\PatientController;
-use App\Http\Controllers\Charts\HeartRateController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Api\Auth\ApiAuthController;
 
@@ -34,10 +35,23 @@ Route::prefix('auth')->group(function () {
     Route::post('register', [ApiAuthController::class, 'register']);
     Route::post('logout', [ApiAuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::post('refresh', [ApiAuthController::class, 'refresh'])->middleware('auth:sanctum');
+    Route::post('create-token', [ApiAuthController::class, 'createToken'])->middleware('auth')->name('create-token');
     Route::get('user', [ApiAuthController::class, 'user'])->middleware('auth:sanctum');
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::prefix('heart-rate')->group(function(){
+        Route::post('store', [HeartRateController::class, 'store']);
+    });
+
+    Route::prefix('blood-pressure')->group(function(){
+        Route::post('store', [BloodPressureController::class, 'store']);
+    });
+
+    Route::prefix('temperature')->group(function(){
+        Route::post('store', [TemperatureController::class, 'store']);
+    });
 
     Route::prefix('chat')->group(function() {
         Route::get('discussions/{id}', [MessageController::class, 'getDiscussions']);
