@@ -495,7 +495,9 @@ export default {
         this.onContainerResize();
 
     },
-    beforeDestroy() {}
+    beforeDestroy() {
+        this.$socket.disconnect();
+    }
 };
 </script>
 
