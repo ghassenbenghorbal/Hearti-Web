@@ -15,8 +15,8 @@ class CreateBloodPressuresTable extends Migration
     {
         Schema::create('blood_pressures', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('patient_id');
-            $table->foreign('patient_id')->references('id')->on('patients');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->integer('blood_pressure');
             $table->timestamp('time')->useCurrent();
             $table->timestamps();

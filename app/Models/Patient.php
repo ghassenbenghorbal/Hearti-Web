@@ -19,6 +19,7 @@ class Patient extends Model
         'address',
         'bracelet_url',
         'user_id',
+        'doctor_id',
     ];
 
     public function getCreatedAtAttribute($value)

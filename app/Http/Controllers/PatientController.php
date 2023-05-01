@@ -27,7 +27,7 @@ class PatientController extends Controller
     }
 
     public function store(Request $request)
-    {
+    {   
         $data = $this->validate($request, [
             'secret_phrase' => 'required',
             'name' => 'required',
@@ -36,6 +36,7 @@ class PatientController extends Controller
             'age' => 'required',
             'address' => 'required|string',
             'user_id' => 'exists:users,id',
+            'doctor_id' => 'exists:users,id',
             'bracelet_url' => 'required',
         ]);
         Patient::create($data);
@@ -56,6 +57,7 @@ class PatientController extends Controller
             'age' => 'required',
             'address' => 'required|string',
             'user_id' => 'exists:users,id',
+            'doctor_id' => 'exists:users,id',
             'bracelet_url' => 'required',
         ]);
         $patient->update($data);
@@ -77,18 +79,7 @@ class PatientController extends Controller
 
     public function getPatientUsers(){
         // $id = auth()->user()->id;
-        // $patients = Message::where('sender', $id)
-        //                     ->orWhere('receiver', $id)
-        //                     ->select(\DB::raw("CASE 
-        //                                     WHEN sender = ".$id." THEN receiver 
-        //                                     WHEN receiver = ".$id." THEN sender 
-        //                                     END AS user_id"))
-        //                     ->join('users', function($join) use($id) {
-        //                         $join->on('users.id', '=', \DB::raw("IF(messages.sender = ".$id.", messages.receiver, messages.sender)"));
-        //                     })
-        //                     ->distinct()
-        //                     ->pluck('user_id');
-        // $results = Patient::whereNotIn('user_id', $patients)->get();
+        // $result = Patient::where('doctor_id', Auth::user()->id)->get(); 
         $results = User::all();
         return $results;
     }

@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Temperature;
 use App\Http\Resources\TemperatureResource;
-use App\Models\Patient;
+use App\Models\User;
 
 class TemperatureController extends Controller
 {
     public function index($id)
     {
-        $patient = Patient::findOrFail($id);
-        $temperatures = Temperature::selectRaw('time as x, patient_id, temperature as y')->where('patient_id',$id)->get();
+        $user = User::findOrFail($id);
+        $temperatures = Temperature::selectRaw('time as x, user_id, temperature as y')->where('user_id',$id)->get();
         return $temperatures;
     }
 
@@ -29,7 +29,7 @@ class TemperatureController extends Controller
             'temperatures' => 'required|array',
             'temperatures.*.time' => 'required|date_format:Y-m-d H:i:s',
             'temperatures.*.temperature' => 'required|numeric',
-            'temperatures.*.patient_id' => 'required|exists:patients,id',
+            'temperatures.*.user_id' => 'required|exists:users,id',
         ]);
         foreach($data['temperatures'] as $temperature){
             Temperature::create($temperature);

@@ -10,7 +10,7 @@ class HeartRate extends Model
     use HasFactory;
 
     protected $fillable = [
-        "patient_id",
+        "user_id",
         "heart_rate",
         "time",
     ];

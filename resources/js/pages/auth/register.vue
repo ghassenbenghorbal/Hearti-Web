@@ -6,6 +6,15 @@
             <v-card>
               <v-card-text>
                 <v-form @submit.prevent="register">
+                  <v-select
+                    v-model="form.is_patient"
+                    :items="isPatientItems"
+                    prepend-inner-icon="mdi-account"
+                    label="Are you a ..."
+                    outlined
+                    dense
+                    :error-messages="form.errors.is_patient"
+                  />
                   <v-text-field
                     v-model="form.name"
                     prepend-inner-icon="mdi-account"
@@ -72,12 +81,13 @@ export default {
     return {
       showPassword: false,
       isLoading: false,
+      isPatientItems: [{text:'Patient',value:1}, {text:'Doctor',value:0}],
       form: this.$inertia.form({
         name: null,
         email: null,
         password: null,
         password_confirmation: null,
-        isPatient: 0,
+        is_patient: 1,
       }),
     };
   },
