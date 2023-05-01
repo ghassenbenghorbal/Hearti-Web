@@ -488,6 +488,7 @@ export default {
     created() {},
     updated() {
         this.scrollDown();
+        this.onContainerResize();
     },
     mounted() {
         this.getDiscussions();
