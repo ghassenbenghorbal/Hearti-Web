@@ -333,7 +333,7 @@ export default {
                             forceNiceScale: true,
                             labels: {
                                 formatter: function (value) {
-                                    return value + " bpm";
+                                    return Math.round(value) + " bpm";
                                 }
                             }
                         },
@@ -369,7 +369,7 @@ export default {
                         yaxis: {
                             labels: {
                                 formatter: function (value) {
-                                    return value + " mmHg";
+                                    return Math.round(value) + " mmHg";
                                 }
                             },
                             forceNiceScale: true
@@ -422,7 +422,7 @@ export default {
                         yaxis: {
                             labels: {
                                 formatter: function (value) {
-                                    return value + " °C";
+                                    return Math.round(value) + " °C";
                                 }
                             },
                             forceNiceScale: true
