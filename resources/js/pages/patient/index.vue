@@ -80,7 +80,9 @@
 </template>
 
 <script>
-import { VAutocomplete } from "vuetify/lib";
+import {
+    VAutocomplete
+} from "vuetify/lib";
 import AdminLayout from "../../layouts/AdminLayout.vue";
 import socketio from "socket.io-client";
 export default {
@@ -152,6 +154,7 @@ export default {
                 relative_contact: null,
                 address: null,
                 connected: false,
+                doctor_id: this.$page.props.auth.user.id,
             }),
             isConnecting: false,
             socketConnectionError: false,
@@ -187,19 +190,21 @@ export default {
     },
     methods: {
         async connectToBracelet() {
-            try {
-                if (this.form.bracelet_url && this.form.secret_phrase) {
-                    this.isConnecting = true;
-                    this.dataSocket.auth = {
-                        braceletId: this.form.secret_phrase,
-                        username: this.$page.props.auth.user.email
-                    };
-                    this.dataSocket.io.uri = this.form.bracelet_url;
+
+            if (this.form.bracelet_url && this.form.secret_phrase) {
+                this.isConnecting = true;
+                this.dataSocket.auth = {
+                    braceletId: this.form.secret_phrase,
+                    username: this.$page.props.auth.user.email
+                };
+                this.dataSocket.io.uri = this.form.bracelet_url;
+                try {
                     await this.dataSocket.connect();
+                } catch (e) {
+                    console.log(e)
+                    this.socketConnectionError = true;
+                    this.isConnecting = false;
                 }
-            } catch (e) {
-                this.socketConnectionError = true;
-                this.isConnecting = false;
             }
         },
         updateData() {
@@ -214,14 +219,14 @@ export default {
         },
         async getUsers() {
             await axios.get(route('patient-users')).then(response => {
-                this.users = response.data
-            })
-            .catch(error => {
-                console.log(error);
-            });
+                    this.users = response.data
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         },
         create() {
-            if(this.users.length == 0){
+            if (this.users.length == 0) {
                 this.getUsers()
             }
             this.dialog = true;
@@ -229,7 +234,7 @@ export default {
             this.form.clearErrors();
         },
         editItem(item) {
-            if(this.users.length == 0){
+            if (this.users.length == 0) {
                 this.getUsers()
             }
             this.form.clearErrors();
@@ -243,6 +248,7 @@ export default {
             this.form.address = item.address;
             this.form.bracelet_url = item.bracelet_url;
             this.form.user_id = item.user_id;
+            this.form.doctor_id = this.$page.props.auth.user.id;
             this.isUpdate = true;
             this.itemId = item.id;
             this.dialog = true;
@@ -293,7 +299,8 @@ export default {
             this.socketConnectionError = false;
 
         })
-        this.dataSocket.on('connection_error', (data) => {
+        this.dataSocket.on('connect_error', (data) => {
+            this.dataSocket.disconnect(true)
             // Fired when couldn’t establish a connection with the server.
             console.log("connection_error")
             this.isConnecting = false;

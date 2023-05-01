@@ -86,19 +86,19 @@ const formatData = (data, type) => {
   switch(type){
     case 0:
       return {heart_rates: [{
-        patient_id: data.patient_id,
+        user_id: data.user_id,
         heart_rate: data.heartRate.y,
         time: data.heartRate.x
       }]}
     case 1:
       return {blood_pressures: [{
-        patient_id: data.patient_id,
+        user_id: data.user_id,
         blood_pressure: data.bloodPressure.y,
         time: data.bloodPressure.x
       }]}
     case 2:
       return {temperatures: [{
-        patient_id: data.patient_id,
+        user_id: data.user_id,
         temperature: data.temperature.y,
         time: data.temperature.x
       }]}
@@ -133,7 +133,7 @@ io.on("connection", async function(socket) {
 
   // Send Data
   let data = {
-    patient_id: socket.handshake.auth.id,
+    user_id: socket.handshake.auth.id,
     heartRate: {x: null, y: null},
     bloodPressure: {x: null,y: null},
     temperature: {x: null,y: null},

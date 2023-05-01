@@ -12,7 +12,7 @@
                     </span></v-list-item-title>
             </v-list-item>
             <v-list-item-group :value="indexMenu">
-                <v-list-item color="red" v-for="(item, i) in items" :key="i" @click="goToPage(item.to)">
+                <v-list-item color="red" v-for="(item, i) in items" :key="i" @click="goToPage(item.to)" v-show="canShowNavItem(item)">
                     <v-list-item-content>
                         <v-list-item-title style="font-family: 'Poppins', sans-serif;" class="font-weight-medium text-center">{{item.title}}</v-list-item-title>
                     </v-list-item-content>
@@ -58,7 +58,7 @@
                 <v-icon large color="red">mdi-hospital</v-icon>
             </v-btn>
 
-            <v-btn v-for="(item, i) in items" :key="i" @click="goToPage(item.to)" class="mr-1" v-text="item.title" rounded small :text="route().current() == item.to ? false : true" :color="route().current() == item.to ? 'error' : ''" :dark="route().current() == item.to ? true : false" :elevation="route().current() == item.to ? 1 : 0" />
+            <v-btn v-for="(item, i) in items" :key="i" @click="goToPage(item.to)" v-show="canShowNavItem(item)" class="mr-1" v-text="item.title" rounded small :text="route().current() == item.to ? false : true" :color="route().current() == item.to ? 'error' : ''" :dark="route().current() == item.to ? true : false" :elevation="route().current() == item.to ? 1 : 0" />
 
             <v-spacer></v-spacer>
             <v-menu offset-y rounded="lg" transition="scale-transition" origin="center center" style="z-index:1000">
@@ -181,6 +181,18 @@ export default {
         },
     },
     methods: {
+        canShowNavItem(item) {
+            switch (item.to) {
+                case "patient.index":
+                    return !this.$page.props.auth.user.is_patient
+                case "analysis":
+                    return !this.$page.props.auth.user.is_patient
+                case "chat":
+                    return true
+                default:
+                    return true;
+            }
+        },
         switchDarkMode() {
             if (this.darkMode) {
                 this.disableDM();

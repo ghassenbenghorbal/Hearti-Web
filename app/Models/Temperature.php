@@ -10,7 +10,7 @@ class Temperature extends Model
     use HasFactory;
 
     protected $fillable = [
-        'patient_id',
+        'user_id',
         'temperature',
         'time',
     ];

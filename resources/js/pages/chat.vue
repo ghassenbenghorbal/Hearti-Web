@@ -14,7 +14,7 @@
                                 Add a new discussion
                             </v-toolbar>
                             <v-card-text class="pt-5 pb-0">
-                                <v-autocomplete v-model="newDiscussionPatient" :items="patients" :item-value="null" item-text="name" label="Select a Patient" required filled outlined dense></v-autocomplete>
+                                <v-autocomplete v-model="newDiscussionPatient" :items="patients" :item-value="null" item-text="name" label="Select a User" required filled outlined dense></v-autocomplete>
                             </v-card-text>
                             <v-card-actions class="d-flex justify-end">
                                 <v-btn color="red" text dark @click="addDiscussionDialog = false">Close</v-btn>

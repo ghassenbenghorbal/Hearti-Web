@@ -7,7 +7,7 @@
                 <div>
                     <v-select class="mr-2" style="width:150px" label="Mode" v-model="mode" :items="modes" outlined dense hide-details></v-select>
                 </div>
-                <div>
+                <div v-if="!$page.props.auth.user.is_patient">
                     <v-autocomplete v-model="patient" @input="changePatient" :items="patients" item-text="name" :item-value="null" label="Patient" dense outlined hide-details></v-autocomplete>
                 </div>
             </div>
@@ -37,7 +37,7 @@
                 <div>
                     <v-select class="mr-2" style="width:150px" label="Mode" v-model="mode" :items="modes" outlined dense hide-details></v-select>
                 </div>
-                <div>
+                <div v-if="!$page.props.auth.user.is_patient">
                     <v-autocomplete v-model="patient" @input="changePatient" :items="patients" item-text="name" :item-value="null" label="Patient" dense outlined hide-details></v-autocomplete>
                 </div>
             </div>
@@ -470,7 +470,7 @@ export default {
             if (this.heartRateArray.length > 10) {
                 const hr = this.heartRateArray.shift();
                 // let heartRate = {
-                //     patient_id: this.patient.id,
+                //     user_id: this.patient.id,
                 //     heart_rate: hr.y,
                 //     time: hr.x
                 // }
@@ -506,7 +506,7 @@ export default {
             if (this.bloodPressureArray.length > 10) {
                 const bp = this.bloodPressureArray.shift();
                 // let bloodPressure = {
-                //     patient_id: this.patient.id,
+                //     user_id: this.patient.id,
                 //     blood_pressure: bp.y,
                 //     time: bp.x
                 // }
@@ -540,7 +540,7 @@ export default {
             if (this.temperatureArray.length > 10) {
                 const temp = this.temperatureArray.shift();
                 // let temperature = {
-                //     patient_id: this.patient.id,
+                //     user_id: this.patient.id,
                 //     temperature: temp.y,
                 //     time: temp.x
                 // }
@@ -592,7 +592,7 @@ export default {
                 if(!this.token)
                 await axios.post(route('create-token')).then(async (resp) => {
                     this.dataSocket.auth = {
-                    id: this.patient.id,
+                    id: this.$page.props.auth.user.id,
                     braceletId: this.patient.secret_phrase,
                     username: this.$page.props.auth.user.email,
                     token: resp.data.token
@@ -602,7 +602,7 @@ export default {
                 })
                 else{
                     this.dataSocket.auth = {
-                    id: this.patient.id,
+                    id: this.$page.props.auth.user.id,
                     braceletId: this.patient.secret_phrase,
                     username: this.$page.props.auth.user.email,
                     token: resp.data.token
@@ -621,7 +621,7 @@ export default {
             this.overviews[3].value = this.patient.relative_contact;
         },
         async fetchBloodPressure() {
-            await axios.get(route("blood-pressure.index", this.patient.id)).then((response) => {
+            await axios.get(route("blood-pressure.index", this.$page.props.auth.user.id)).then((response) => {
                 this.bloodPressureArray = response.data;
                 this.$refs.bloodPressure[0].updateSeries(
                     [{
@@ -635,7 +635,7 @@ export default {
             })
         },
         async fetchTemperature() {
-            await axios.get(route("temperature.index", this.patient.id)).then((response) => {
+            await axios.get(route("temperature.index", this.$page.props.auth.user.id)).then((response) => {
                 this.temperatureArray = response.data;
                 this.$refs.temperature[0].updateSeries(
                     [{
@@ -649,7 +649,7 @@ export default {
             })
         },
         async fetchHeartRate() {
-            await axios.get(route("heart-rate.index", this.patient.id)).then((response) => {
+            await axios.get(route("heart-rate.index", this.$page.props.auth.user.id)).then((response) => {
                 this.heartRateArray = response.data;
                 this.$refs.heartRate[0].updateSeries(
                     [{
@@ -664,7 +664,7 @@ export default {
         },
         async saveHeartRateInBackground(hr) {
             let heartRate = {
-                patient_id: this.patient.id,
+                user_id: this.$page.props.auth.user.id,
                 heart_rate: hr.y,
                 time: hr.x
             }
@@ -679,7 +679,7 @@ export default {
         },
         async saveBloodPressureInBackground(bp) {
             let bloodPressure = {
-                patient_id: this.patient.id,
+                user_id: this.$page.props.auth.user.id,
                 blood_pressure: bp.y,
                 time: bp.x
             }
@@ -693,7 +693,7 @@ export default {
         },
         async saveTemperatureInBackground(temp) {
             let temperature = {
-                patient_id: this.patient.id,
+                user_id: this.$page.props.auth.user.id,
                 temperature: temp.y,
                 time: temp.x
             }
