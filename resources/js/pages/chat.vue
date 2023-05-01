@@ -49,7 +49,7 @@
                                 </v-list-item-content>
                             </v-list-item>
                             <div v-if="loadingDiscussions" ref="" class="d-flex flex-column-reverse pr-2">
-                            <v-skeleton-loader v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
+                                <v-skeleton-loader v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
                             </div>
                         </v-list-item-group>
                     </v-list>
@@ -58,14 +58,16 @@
         </div>
 
         <div :style="{position: 'relative', inset: 0, width: setChatsCardWidth()}" :class="{'px-1': !$vuetify.breakpoint.xsOnly}">
-            <v-card v-show="showChatsCard" outlined rounded="xl" style="height:100%;">
-                <v-card-title :class="{'py-2': $vuetify.breakpoint.xsOnly, 'py-3': !$vuetify.breakpoint.xsOnly}">
-                    <v-btn class="mr-2" elevation="2" fab small v-if="$vuetify.breakpoint.xsOnly" @click="hideChatsCard()"><v-icon>mdi-arrow-left</v-icon></v-btn>
+            <v-card v-show="showChatsCard" outlined rounded="xl" style="height:100%;" ref="messageCard">
+                <v-card-title ref="messageCardTitle" :class="{'py-2': $vuetify.breakpoint.xsOnly, 'py-3': !$vuetify.breakpoint.xsOnly}">
+                    <v-btn class="mr-2" elevation="2" fab small v-if="$vuetify.breakpoint.xsOnly" @click="hideChatsCard()">
+                        <v-icon>mdi-arrow-left</v-icon>
+                    </v-btn>
                     <div>{{discussions[selectedDiscussion]? discussions[selectedDiscussion].patient_name: "Messages"}}</div>
                     <v-icon v-if="discussions[selectedDiscussion] && discussions[selectedDiscussion].connected" color="green">mdi-circle-medium</v-icon>
                 </v-card-title>
                 <v-divider></v-divider>
-                <div class="d-flex flex-column" style="height: 100%;" ref="messagesContainer">
+                <div v-resize="onContainerResize" class="d-flex flex-column" style="height: 100%;" ref="messagesContainer">
                     <div class="flex-fill pt-1 px-lg-5 px-xl-5 px-md-5 px-0" style="height:100%; overflow-y: auto;" id="scrollContainer" ref="scrollContainer">
                         <v-list reverse class="py-0 mx-2" ref="messagesListGroup" rounded>
                             <div v-if="discussions && discussions[selectedDiscussion] && !loadingMessages" ref="" class="d-flex flex-column-reverse">
@@ -91,7 +93,7 @@
                                 </v-list-item>
                             </div>
                             <div v-if="loadingMessages" ref="" class="d-flex flex-column-reverse pr-2">
-                                <v-skeleton-loader  v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
+                                <v-skeleton-loader v-for="i in numberOfListSkeletons" :key="i" type="list-item-avatar-two-line" class=""></v-skeleton-loader>
                             </div>
                         </v-list>
                     </div>
@@ -202,7 +204,7 @@ export default {
                 }
             }
             console.log("hello")
-            if(!found) {
+            if (!found) {
                 console.log("found")
                 this.discussions.push({
                     user_id: message.sender.id,
@@ -223,43 +225,33 @@ export default {
         },
     },
     methods: {
-        setDiscussionsCardWidth(){
-            if(this.showDiscussionsCard && this.showChatsCard)
-            {
+        setDiscussionsCardWidth() {
+            if (this.showDiscussionsCard && this.showChatsCard) {
                 return "30%"
-            }
-            else if(this.showDiscussionsCard && !this.showChatsCard)
-            {
+            } else if (this.showDiscussionsCard && !this.showChatsCard) {
                 return "100%"
-            }
-            else if(!this.showDiscussionsCard && this.showChatsCard)
-            {
+            } else if (!this.showDiscussionsCard && this.showChatsCard) {
                 return "0%"
             }
         },
-        setChatsCardWidth(){
-            if(this.showDiscussionsCard && this.showChatsCard)
-            {
+        setChatsCardWidth() {
+            if (this.showDiscussionsCard && this.showChatsCard) {
                 return "70%"
-            }
-            else if(this.showDiscussionsCard && !this.showChatsCard)
-            {
+            } else if (this.showDiscussionsCard && !this.showChatsCard) {
                 return "0%"
-            }
-            else if(!this.showDiscussionsCard && this.showChatsCard)
-            {
+            } else if (!this.showDiscussionsCard && this.showChatsCard) {
                 return "100%"
             }
         },
-        showChatsMobile(){
-            if(this.$vuetify.breakpoint.xsOnly){
+        showChatsMobile() {
+            if (this.$vuetify.breakpoint.xsOnly) {
                 this.showDiscussionsCard = false;
                 this.showChatsCard = true;
                 this.onContainerResize()
             }
         },
-        hideChatsCard(){
-            if(this.$vuetify.breakpoint.xsOnly){
+        hideChatsCard() {
+            if (this.$vuetify.breakpoint.xsOnly) {
                 this.showDiscussionsCard = true;
                 this.showChatsCard = false;
                 this.onContainerResize()
@@ -294,24 +286,24 @@ export default {
                 discussion.connected = state;
             }
         },
-        async sendMessageRequest(){
+        async sendMessageRequest() {
             const resp = await axios
-                    .post(
-                        route("messages.store"), {
-                            sender: this.$page.props.auth.user.id,
-                            receiver: this.discussions[this.selectedDiscussion].user_id,
-                            text: this.newMessage,
-                        }
-                    )
-                    .catch(error => {
-                        this.isSendingMessage = false;
-                        console.log(error);
-                    });
+                .post(
+                    route("messages.store"), {
+                        sender: this.$page.props.auth.user.id,
+                        receiver: this.discussions[this.selectedDiscussion].user_id,
+                        text: this.newMessage,
+                    }
+                )
+                .catch(error => {
+                    this.isSendingMessage = false;
+                    console.log(error);
+                });
         },
         sendMessage() {
             this.isSendingMessage = true;
             if (this.newMessage.length > 0 && this.newMessage.length <= 255 && this.selectedDiscussion >= 0) {
-                
+
                 let m = {
                     sender: {
                         id: this.$page.props.auth.user.id,
@@ -341,7 +333,7 @@ export default {
             }
         },
         async getMessages() {
-            if(this.discussions[this.selectedDiscussion]){
+            if (this.discussions[this.selectedDiscussion]) {
                 this.loadingMessages = true;
                 await axios
                     .get(
@@ -435,7 +427,12 @@ export default {
             this.$refs.discussionsContainer.style.maxHeight =
                 this.maxDiscussionsListHeight + "px";
 
-            this.$refs.messagesContainer.style.maxHeight = this.$refs.discussionsContainer.style.maxHeight;
+            this.maxMessagesHeight =
+                this.$refs.messageCard.$el.clientHeight -
+                this.$refs.messageCardTitle.clientHeight -
+                10;
+
+            this.$refs.messagesContainer.style.maxHeight = this.maxMessagesHeight + "px";
 
             const discussionsContentHeight = this.$refs.discussionsList.$el
                 .clientHeight;
@@ -476,13 +473,10 @@ export default {
     },
     watch: {
         '$vuetify.breakpoint.xsOnly'(val) {
-            if(val)
-            {
+            if (val) {
                 this.showDiscussionsCard = true;
                 this.showChatsCard = false;
-            }
-            else
-            {
+            } else {
                 this.showDiscussionsCard = true;
                 this.showChatsCard = true;
             }
