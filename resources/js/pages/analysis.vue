@@ -231,7 +231,7 @@ export default {
         async submitForm() {
             if (this.$refs.form.validate()) {
                 this.analysing = true;
-                axios.post("http://127.0.0.1:8000/predict", this.form).then(response => {
+                axios.post("http://127.0.0.1:8082/predict", this.form).then(response => {
                     this.analysing = false;
                     this.result = response.data.heart_disease_risk;
                     this.resultDialog = true;
