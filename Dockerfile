@@ -16,6 +16,7 @@ RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
 
 WORKDIR /app
 COPY . /app
+RUN cp .env-example .env
 RUN npm install -g npm@8.5.5
 RUN composer install --no-scripts
 RUN npm install --ignore-scripts
