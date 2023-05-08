@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Patient;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     public function index()
-    {
-        $patients = Patient::all();
+    {   
+        $patients = Auth::user()->is_patient ? [Auth::user()->patient] : Patient::all();
         // $heartRateImage = asset(\Storage::url('images/heart-rate.jpg'));
         // $temperatureImage = asset(\Storage::url('images/temperature.jpg'));
         // $bloodPressureImage = asset(\Storage::url('images/blood-pressure.png'));

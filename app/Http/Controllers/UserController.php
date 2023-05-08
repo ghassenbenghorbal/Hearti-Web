@@ -17,7 +17,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        return Inertia::render('profile');
+        return Inertia::render('profile', [
+            'patient' => Auth::user()->is_patient ? Auth::user()->patient : null,
+        ]);
     }
 
     public function generateApiToken(Request $request)

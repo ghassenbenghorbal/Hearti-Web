@@ -38,7 +38,9 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'is_patient' => 'required|boolean'
+            'is_patient' => 'required|boolean',
+            'bracelet_url' => $request->is_patient ? ['required', 'url'] : [],
+            'secret_phrase' => $request->is_patient ? ['required'] : []
         ]);
 
         $user = User::create([
@@ -47,6 +49,12 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'is_patient' => $request->is_patient,
         ]);
+        if($request->is_patient)
+            $user->patient()->create([
+                'name' => $request->name,
+                'bracelet_url' =>$request->bracelet_url,
+                'secret_phrase' => $request->secret_phrase,
+            ]);
 
         event(new Registered($user));
 

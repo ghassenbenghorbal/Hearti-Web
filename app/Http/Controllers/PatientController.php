@@ -31,10 +31,6 @@ class PatientController extends Controller
         $data = $this->validate($request, [
             'secret_phrase' => 'required',
             'name' => 'required',
-            'relative_name' => 'required',
-            'relative_contact' => 'required',
-            'age' => 'required',
-            'address' => 'required|string',
             'user_id' => 'exists:users,id',
             'doctor_id' => 'exists:users,id',
             'bracelet_url' => 'required',
@@ -52,10 +48,6 @@ class PatientController extends Controller
         $data = $this->validate($request, [
             'secret_phrase' => 'required',
             'name' => 'required',
-            'relative_name' => 'required',
-            'relative_contact' => 'required',
-            'age' => 'required',
-            'address' => 'required|string',
             'user_id' => 'exists:users,id',
             'doctor_id' => 'exists:users,id',
             'bracelet_url' => 'required',
@@ -75,6 +67,16 @@ class PatientController extends Controller
             'type' => 'success',
             'text' => 'Success delete patient!',
         ]);
+    }
+
+    public function updateBracelet (Request $request)
+    {
+        $request->validate([
+            'bracelet_url' => ['required', 'url'],
+            'secret_phrase' => ['required']
+        ]);
+        \Auth::user()->patient()->update($request->only('bracelet_url', 'secret_phrase'));
+        return back()->with('success', "Bracelet information changed successfully!");
     }
 
     public function getPatientUsers(){

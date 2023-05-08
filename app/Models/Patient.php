@@ -26,4 +26,10 @@ class Patient extends Model
     {
         return Carbon::parse($value)->format('H:i, d M Y');
     }
+
+    public function user(){
+
+        return $this->belongsTo(User::class, 'user_id');
+
+    }
 }

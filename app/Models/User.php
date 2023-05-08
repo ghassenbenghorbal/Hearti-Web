@@ -48,4 +48,14 @@ class User extends Authenticatable
         return $this->hasMany(Message::class, 'sender');
 
     }
+    public function patient(){
+
+        return $this->hasOne(Patient::class, 'user_id');
+
+    }
+    public function doctor(){
+
+        return $this->hasOne(Patient::class, 'doctor_id');
+
+    }
 }

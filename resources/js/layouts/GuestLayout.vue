@@ -32,5 +32,6 @@ export default {
 <style>
   html, body {
     background-color: #f5f5f5;
+    margin: 0 !important;
   }
 </style>

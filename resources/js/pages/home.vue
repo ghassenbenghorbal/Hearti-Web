@@ -1,7 +1,6 @@
 <template>
 <admin-layout>
     <div style="height:100%" class="d-flex flex-column">
-
         <div class="mb-4 d-flex align-center justify-center flex-wrap" v-if="$vuetify.breakpoint.lgAndUp">
             <div style="" class="mr-5 d-flex">
                 <div>

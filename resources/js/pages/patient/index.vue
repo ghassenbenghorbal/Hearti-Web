@@ -8,10 +8,10 @@
         </v-btn>
     </div>
     <v-data-table :items="items.data" :headers="headers" :options.sync="options" :server-items-length="items.total" :loading="isLoadingTable" class="elevation-1">
-        <template #[`item.index`]="{ index }">
+        <template [`item.index`]="{ index }">
             {{ (options.page - 1) * options.itemsPerPage + index + 1 }}
         </template>
-        <template #[`item.action`]="{ item }">
+        <template [`item.action`]="{ item }">
             <v-btn x-small icon @click="editItem(item)">
                 <v-icon small> mdi-pencil </v-icon>
             </v-btn>

@@ -49,6 +49,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('profile')->group(function(){
         Route::get('/', [UserController::class, 'index'])->name('profile');
+        Route::put('bracelet', [PatientController::class, 'updateBracelet'])->name('profile.bracelet');
         Route::put('change-password', [UserController::class, 'changePassword']);
         Route::put('change-profile', [UserController::class, 'changeProfile']);
         Route::post('generate-token', [UserController::class, 'generateApiToken']);
