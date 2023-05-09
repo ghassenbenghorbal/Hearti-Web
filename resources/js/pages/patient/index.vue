@@ -8,10 +8,10 @@
         </v-btn>
     </div>
     <v-data-table :items="items.data" :headers="headers" :options.sync="options" :server-items-length="items.total" :loading="isLoadingTable" class="elevation-1">
-        <template [`item.index`]="{ index }">
+        <template #[`item.index`]="{ index }">
             {{ (options.page - 1) * options.itemsPerPage + index + 1 }}
         </template>
-        <template [`item.action`]="{ item }">
+        <template #[`item.action`]="{ item }">
             <v-btn x-small icon @click="editItem(item)">
                 <v-icon small> mdi-pencil </v-icon>
             </v-btn>
@@ -30,7 +30,7 @@
                     <v-col>
                         <div>
                             <h3 class="pb-4">Patient Information:</h3>
-                            <v-autocomplete v-model="form.user_id" label="User" :items="users" item-text="name" item-value="id" outlined dense></v-autocomplete>
+                            <v-autocomplete @change="setPatient" v-model="form.user_id" label="User" :items="users" item-text="name" item-value="id" outlined dense></v-autocomplete>
                             <v-text-field v-model="form.name" label="Name" :error-messages="form.errors.name" type="text" outlined dense />
                             <v-text-field v-model="form.age" label="Age" :error-messages="form.errors.age" outlined dense />
                             <v-text-field v-model="form.relative_name" label="Relative Name" :error-messages="form.errors.relative_name" outlined dense />
@@ -189,6 +189,18 @@ export default {
         },
     },
     methods: {
+        setPatient() {
+            const user = this.searchUserById(this.form.user_id)
+            console.log(user)
+            this.form.name = user.name;
+            if(user.is_patient){
+                this.form.bracelet_url = user.patient.bracelet_url;
+                this.form.secret_phrase = user.patient.secret_phrase;
+            }
+        },
+        searchUserById(id) {
+            return this.users.find((user) => user.id == id);
+        },
         async connectToBracelet() {
 
             if (this.form.bracelet_url && this.form.secret_phrase) {

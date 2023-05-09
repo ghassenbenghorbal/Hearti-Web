@@ -11,7 +11,7 @@ class HomeController extends Controller
 {
     public function index()
     {   
-        $patients = Auth::user()->is_patient ? [Auth::user()->patient] : Patient::all();
+        $patients = Auth::user()->is_patient ? [Auth::user()->patient] : Patient::where('doctor_id', Auth::user()->id)->get();
         // $heartRateImage = asset(\Storage::url('images/heart-rate.jpg'));
         // $temperatureImage = asset(\Storage::url('images/temperature.jpg'));
         // $bloodPressureImage = asset(\Storage::url('images/blood-pressure.png'));

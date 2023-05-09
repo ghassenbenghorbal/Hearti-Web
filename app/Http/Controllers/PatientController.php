@@ -11,7 +11,7 @@ class PatientController extends Controller
 {
     public function index(Request $request)
     {
-        $data = Patient::when($request->sort_by, function ($query, $value) {
+        $data = Patient::where('doctor_id', \Auth::user()->id)->when($request->sort_by, function ($query, $value) {
                 $query->orderBy($value, request('order_by', 'asc'));
             })
             ->when(!isset($request->sort_by), function ($query) {
@@ -34,8 +34,19 @@ class PatientController extends Controller
             'user_id' => 'exists:users,id',
             'doctor_id' => 'exists:users,id',
             'bracelet_url' => 'required',
+            
+            'relative_contact' => 'nullable',
+            'relative_name' => 'nullable',
+            'age' => 'nullable',
+            'address' => 'nullable',
         ]);
-        Patient::create($data);
+        $patient = Patient::where('user_id',$request->user_id)->first();
+        if($patient){
+            Patient::update($data);
+        }
+        else{
+            Patient::create($data);
+        }
         return redirect()->back()->with('message', [
             'type' => 'success',
             'text' => 'Success create patient!',
@@ -51,6 +62,11 @@ class PatientController extends Controller
             'user_id' => 'exists:users,id',
             'doctor_id' => 'exists:users,id',
             'bracelet_url' => 'required',
+
+            'relative_contact' => 'nullable',
+            'relative_name' => 'nullable',
+            'age' => 'nullable',
+            'address' => 'nullable',
         ]);
         $patient->update($data);
         return redirect()->back()->with('message', [
@@ -82,7 +98,7 @@ class PatientController extends Controller
     public function getPatientUsers(){
         // $id = auth()->user()->id;
         // $result = Patient::where('doctor_id', Auth::user()->id)->get(); 
-        $results = User::all();
+        $results = User::with('patient')->get();
         return $results;
     }
 }
