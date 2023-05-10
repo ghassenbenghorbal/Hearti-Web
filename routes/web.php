@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\Api\Auth\ApiAuthController;
 use App\Http\Controllers\Charts\HeartRateController;
 use App\Http\Controllers\Charts\BloodPressureController;
 use App\Http\Controllers\Charts\TemperatureController;
@@ -29,6 +30,8 @@ Route::get('/', function () {
 })->middleware('guest')->name('/');
 
 Route::middleware(['auth'])->group(function () {
+
+    Route::post('create-token', [ApiAuthController::class, 'createToken'])->name('create-token');
 
     Route::get('home', [HomeController::class, 'index'])->name('home');
 

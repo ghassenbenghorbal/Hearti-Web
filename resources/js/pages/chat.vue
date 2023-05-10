@@ -176,6 +176,7 @@ export default {
             console.log(error)
         },
         users(users) {
+            console.log(users)
             users.forEach((user) => {
                 user.self = user.channelID === this.$socket.id;
                 this.initReactiveProperties(user, true);
@@ -278,13 +279,14 @@ export default {
         },
         async initReactiveProperties(user, state) {
             //search in discussions if user is already there
-            let discussion = this.discussions.find(discussion => discussion.user_id == user.username);
+            let discussion = this.discussions.find(d => d.user_id == user.username);
             if (discussion) {
                 if (state) {
                     discussion.channelID = user.channelID;
                 }
                 discussion.connected = state;
             }
+            console.log(this.discussions)
         },
         async sendMessageRequest() {
             const resp = await axios
@@ -352,15 +354,17 @@ export default {
                     });
             }
         },
-        async getDiscussions() {
+        getDiscussions() {
             this.loadingDiscussions = true;
             this.loadingMessages = true;
-            await axios
+            axios
                 .get(route("discussions", this.$page.props.auth.user.id))
                 .then(response => {
                     this.discussions = response.data;
                     this.loadingDiscussions = false;
                     this.loadingMessages = false;
+                    this.connectToSocket();
+                    this.onContainerResize();
                 })
                 .catch(error => {
                     console.log(error);
@@ -492,8 +496,6 @@ export default {
     },
     mounted() {
         this.getDiscussions();
-        this.connectToSocket();
-        this.onContainerResize();
 
     },
     beforeDestroy() {

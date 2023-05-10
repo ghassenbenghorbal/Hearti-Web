@@ -35,7 +35,6 @@ Route::prefix('auth')->group(function () {
     Route::post('register', [ApiAuthController::class, 'register']);
     Route::post('logout', [ApiAuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::post('refresh', [ApiAuthController::class, 'refresh'])->middleware('auth:sanctum');
-    Route::post('create-token', [ApiAuthController::class, 'createToken'])->middleware('auth')->name('create-token');
     Route::get('user', [ApiAuthController::class, 'user'])->middleware('auth:sanctum');
 });
 
