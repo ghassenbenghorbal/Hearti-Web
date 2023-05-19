@@ -5,6 +5,7 @@
 - Vue
 - Vuetify + Material Design Icons
 - FastAPI
+- Nodejs
 
 ## FastAPI(Used for Prediction) Installation
 
