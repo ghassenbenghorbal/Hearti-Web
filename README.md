@@ -24,11 +24,20 @@ cd fastapi
 uvicorn main:app --reload
 ```
 
-## Nodejs(Used for Realtime chat) Installation
+## Nodejs (Used for Realtime Bracelet data) Installation
 
 Install Dependecies
 ```bash
-cd express-smart-bracelet
+cd realtime-bracelet-server
+npm install
+node index.js
+```
+
+## Nodejs (Used for Realtime Chat data) Installation
+
+Install Dependecies
+```bash
+cd realtime-chat-server
 npm install
 node index.js
 ```
