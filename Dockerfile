@@ -20,6 +20,8 @@ RUN npm install -g npm@8.5.5
 RUN composer install --no-scripts
 RUN npm install --ignore-scripts
 RUN npm run prod
+RUN php artisan migrate --seed
+RUN php artisan storage:link
 
-CMD php artisan serve --host=0.0.0.0 --port=80
-EXPOSE 80
+CMD php artisan serve --host=0.0.0.0 --port=8000
+EXPOSE 8000

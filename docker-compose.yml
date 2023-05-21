@@ -1,0 +1,90 @@
+version: '3'
+services:
+  #hearti Service
+  hearti:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: hearti-image
+    container_name: hearti-container
+    ports:
+      - "8000:8000"
+    # volumes:
+    #  - ../hearti:/app
+    networks:
+      - app-network
+    depends_on:
+      - db
+
+  #bracelet Service
+  bracelet:
+    build:
+      context: ./realtime-bracelet-server
+      dockerfile: ./realtime-bracelet-server/Dockerfile
+    image: bracelet-image
+    container_name: bracelet-container
+    ports:
+      - "3001:3001"
+    # volumes:
+    #  - ./realtime-bracelet-server-nodejs:/app
+    networks:
+      - app-network
+    depends_on:
+      - db
+
+  #bracelet Service
+  chat:
+    build:
+      context: ./realtime-chat-server
+      dockerfile: ./realtime-chat-server/Dockerfile
+    image: chat-image
+    container_name: chat-container
+    ports:
+      - "3000:3000"
+    # volumes:
+    #  - ./realtime-chat-server-nodejs:/app
+    networks:
+      - app-network
+    depends_on:
+      - db
+      
+  #prediction Service
+  prediction:
+    build:
+      context: ./prediction-server
+      dockerfile: ./prediction-server/Dockerfile
+    image: prediction-image
+    container_name: prediction-container
+    ports:
+      - "8082:8082"
+    # volumes:
+    #  - ./prediction-server:/app
+    networks:
+      - app-network
+    depends_on:
+      - db
+
+#MySQL Service
+  db:
+    image: mysql:5.7
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: hearti
+      MYSQL_ROOT_PASSWORD: root
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    # volumes:
+      # - ./mysql/dbdata:/var/lib/mysql
+      # - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+#Docker Networks
+networks:
+  app-network:
+#Volumes
+# volumes:
+#   dbdata:
+#     driver: local
